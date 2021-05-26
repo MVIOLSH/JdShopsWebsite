@@ -1,0 +1,27 @@
+﻿@inject IJSRuntime _jsr
+
+<h3>LoginForm</h3>
+
+<p>
+    @if (string.IsNullOrEmpty(username))
+    {
+        <span><a href="/register.html"></a> <a href="/login"></a></span>
+    }
+    else
+    {
+        <span> Hello, @username <a href="/logout">Logout</a></span>
+    }
+</p>
+@code
+{
+    string username = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        var userData = await _jsr.InvokeAsync<string>("localStorage.getItem", "user").ConfigureAwait(false);
+        if (!string.IsNullOrWhiteSpace(userData))
+            username = userData.Split(',', 2)[0];
+    }
+
+}

@@ -1,0 +1,70 @@
+﻿@page "/shopDetails/{id}"
+@using System.Net
+@using Flurl
+@inject HttpClient Http
+
+
+<h3>ShopDetails</h3>
+
+
+@if (shops == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead class="thead-light">
+        <tr>
+            <th>Shop Number</th>
+            <th>Facia</th>
+            <th>Town</th>
+            <th>Phone Number</th>
+            <th>More Details</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var shop in shops)
+        {
+           
+
+            <tr>
+                <td style="font-weight: bold">@shop.ShopNumber</td>
+                <td style=""><img src="logos/@(shop.Facia + ".png")" alt="@shop.Facia" width="110px" height="60px"/></td>
+                <td style="font-weight: bold">@shop.Town</td>
+                <td><button class="btn btn-primary" a href="tel:@shop.PhoneNumber">Call the shop on @shop.PhoneNumber</button></td>
+                
+
+            </tr>
+
+        }
+        </tbody>
+    </table>
+}
+    @code
+    {
+        [Parameter]
+        public float id { get; set; }
+
+        public List<ShopDto> shops { get; set; }
+
+        protected override void OnParametersSet()
+        {
+
+            var test = id;
+            
+        }
+        protected override async Task OnInitializedAsync()
+        {
+            var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/shops/", id.ToString());
+            shops = await Http.GetFromJsonAsync<List<ShopDto>>(url);
+
+        }
+        public async Task NavigateToNewTab(float id)
+        {
+           // string url = Url.Combine("http://www.google.com/maps/place/", id.ToString());
+          //  await JSRuntime.InvokeAsync<string>("open", url, "_blank");
+
+        }
+    }
+}

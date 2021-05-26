@@ -1,0 +1,72 @@
+﻿@page "/register"
+@using JdShopsWebsite.Services
+@using System.Net
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+
+<h1>Register</h1>
+
+
+
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Please enter your details</h5>
+        <EditForm Model="RegisterModel" OnValidSubmit="HandleRegistration">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="form-group">
+                <label for="email">Email address</label>
+                <InputText Id="email" class="form-control" @bind-Value="RegisterModel.email" />
+                <ValidationMessage For="@(() => RegisterModel.email)" />
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <InputText Id="password" type="password" class="form-control" @bind-Value="RegisterModel.passwordHash" />
+                <ValidationMessage For="@(() => RegisterModel.passwordHash)" />
+            </div>
+            <div class="form-group">
+                <label for="password">Confirm Password</label>
+                <InputText Id="passwordConfirm" type="password" class="form-control" @bind-Value="RegisterModel.confirmPassword" />
+                <ValidationMessage For="@(() => RegisterModel.confirmPassword)" />
+            </div>
+            <div class="form-group">
+                <label for="password">First Name</label>
+                <InputText Id="firstName"  class="form-control" @bind-Value="RegisterModel.fname" />
+                <ValidationMessage For="@(() => RegisterModel.fname)" />
+            </div>
+            <div class="form-group">
+                <label for="password">Last Name</label>
+                <InputText Id="lName"  class="form-control" @bind-Value="RegisterModel.lname" />
+                <ValidationMessage For="@(() => RegisterModel.lname)" />
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+
+    private RegisterModel RegisterModel = new RegisterModel();
+    private bool ShowErrors;
+    private HttpStatusCode Errors;
+
+    private async Task HandleRegistration()
+    {
+        ShowErrors = false;
+
+        var result = await AuthService.Register(RegisterModel);
+
+        if (result.IsSuccessStatusCode)
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+        else
+        {
+            Errors = result.StatusCode;
+            ShowErrors = true;
+        }
+    }
+
+}
