@@ -1,4 +1,5 @@
-﻿@inject IJSRuntime _jsr
+﻿@using Bunit.Extensions
+@inject IJSRuntime _jsr
 
 <h3>LoginForm</h3>
 
@@ -22,6 +23,8 @@
         var userData = await _jsr.InvokeAsync<string>("localStorage.getItem", "user").ConfigureAwait(false);
         if (!string.IsNullOrWhiteSpace(userData))
             username = userData.Split(',', 2)[0];
+     
+
     }
 
 }

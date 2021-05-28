@@ -1,10 +1,20 @@
 ﻿@page "/shopDetails/{id}"
 @using System.Net
+@using Bunit.Extensions
 @using Flurl
+@using Blazored
+@using Blazored.Modal
+@using Blazored.Modal.Services
+@using System.IO
+@using System.Security.Permissions
+@using Microsoft.AspNetCore.Http
+@using Microsoft.EntityFrameworkCore.Migrations
+
 @inject HttpClient Http
 
 
-<h3>ShopDetails</h3>
+
+<h3><center>ShopDetails</center></h3>
 
 
 @if (shops == null)
@@ -13,58 +23,190 @@
 }
 else
 {
-    <table class="table table-striped">
-        <thead class="thead-light">
-        <tr>
-            <th>Shop Number</th>
-            <th>Facia</th>
-            <th>Town</th>
-            <th>Phone Number</th>
-            <th>More Details</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var shop in shops)
-        {
-           
-
-            <tr>
-                <td style="font-weight: bold">@shop.ShopNumber</td>
-                <td style=""><img src="logos/@(shop.Facia + ".png")" alt="@shop.Facia" width="110px" height="60px"/></td>
-                <td style="font-weight: bold">@shop.Town</td>
-                <td><button class="btn btn-primary" a href="tel:@shop.PhoneNumber">Call the shop on @shop.PhoneNumber</button></td>
-                
-
-            </tr>
-
-        }
-        </tbody>
-    </table>
-}
-    @code
+    @foreach (var shop in shops)
     {
-        [Parameter]
-        public float id { get; set; }
 
-        public List<ShopDto> shops { get; set; }
+        <table class="table table-striped">
+            <thead class="thead-light">
+                <tr>
+                    <th>Shop Number</th>
+                    <th>Facia</th>
+                    <th>Town</th>
+                    <th>Phone Number</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="width: 20%; font-weight: bold">@shop.ShopNumber</td>
+                    <td style="width: 20%"><img src="logos/@(shop.Facia + ".png")" alt="@shop.Facia" width="110px" height="60px" /></td>
+                    <td style="width: 40%; font-weight: bold">@shop.Town</td>
+                    <td><button class="btn btn-primary" a href="tel:@shop.PhoneNumber">Call the shop on @shop.PhoneNumber</button></td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-striped">
+            <thead class="thead-light">
+                <tr>
+                    <th>Delivery Info</th>
+                    <th>Longitude</th>
+                    <th>Latitude</th>
+                    <th>Show on google maps</th>
 
-        protected override void OnParametersSet()
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="width: 40%">@shop.DeliveryInfo</td>
+                    <td style="width: 20%">@shop.MapCoordinatesLongitude</td>
+                    <td style="width: 20%">@shop.MapCoordinatesLatitude</td>
+                    <td><a href="http://www.google.com/maps/place/@shop.MapCoordinatesLatitude,@shop.MapCoordinatesLongitude" target="_blank"><button class="btn btn-primary">Go to map</button></a></td>
+                </tr>
+            </tbody>
+        </table>
+        <img style="max-width: 500px; max-height:500px" src="MEDIA/@shop.ShopNumber/@imgurl" />
+        <br />
+
+
+        <br />
+        <button class="btn btn-primary" style="margin: 5px" @onclick="@(()=>AddRequest(id))">Request Change</button><button class="btn btn-primary" style="margin: 5px">Edit Shop Details</button><button class="btn btn-secondary" style="margin: 5px">Delete Shop </button>
+
+        <br />
+
+
+
+
+        @if (!addAddresses.IsNullOrEmpty())
         {
 
-            var test = id;
-            
-        }
-        protected override async Task OnInitializedAsync()
-        {
-            var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/shops/", id.ToString());
-            shops = await Http.GetFromJsonAsync<List<ShopDto>>(url);
+            foreach (var address in addAddresses)
+            {
+                <br />
+                <table class="table table-striped">
+                    <thead class="thead-light">
+                    <tr>
+                        <th>Additional address for @address.Description</th>
 
-        }
-        public async Task NavigateToNewTab(float id)
-        {
-           // string url = Url.Combine("http://www.google.com/maps/place/", id.ToString());
-          //  await JSRuntime.InvokeAsync<string>("open", url, "_blank");
+                    </tr>
+                    <tr>
+                        <th>Delivery Info</th>
+                        <th>Longitude</th>
+                        <th>Latitude</th>
+                        <th>Show on google maps</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td style="width: 40%">@address.DeliveryInfo</td>
+                        <td style="width: 15%">@address.MapCoordinatesLongitude</td>
+                        <td style="width: 15%">@address.MapCoordinatesLatitude</td>
+                        <td><a href="http://www.google.com/maps/place/{@address.MapCoordinatesLatitude},@address.MapCoordinatesLongitude" target="_blank"><button class="btn btn-primary">Go to map</button></a></td>
+                        <td>
+                            <button class="btn btn-primary" @onclick="@(()=>EditAddAddress(address.ShopNumber,
+                                                                          address.Description, address.DeliveryInfo,
+                                                                          address.MapCoordinatesLongitude, address.MapCoordinatesLatitude, address.Id))">
+                                Edit
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-secondary" @onclick="@(()=>DeleteAddAddress(address.ShopNumber,
+                                                                            address.Description, address.DeliveryInfo,
+                                                                            address.MapCoordinatesLongitude, address.MapCoordinatesLatitude, address.Id))">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
 
+                    </tbody>`
+                </table>
+              
+
+            }
         }
+       
     }
+    <button class="btn btn-primary" @onclick="@(()=>AddAddAddress(id))">
+        Add Additional Delivery Address
+    </button>
 }
+
+
+@code
+{
+    [Parameter]
+    public string id { get; set; }
+
+    public List<ShopDto> shops { get; set; }
+    public List<AdditionalAddreessesDto> addAddresses { get; set; }
+    public string imgurl { get; set; }
+
+
+
+    protected override void OnParametersSet()
+    {
+
+        var test = id;
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/shops/", id.ToString());
+        shops = await Http.GetFromJsonAsync<List<ShopDto>>(url);
+        var url2 = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/shops/", id.ToString(), "/additional");
+        addAddresses = await Http.GetFromJsonAsync<List<AdditionalAddreessesDto>>(url2);
+        imgurl =id.ToString()+ ".jpg";
+
+
+    }
+
+    [CascadingParameter] public IModalService Modal { get; set; }
+
+    void EditAddAddress(float shopNumber, string description, string deliveryInfo, string longitude, string latitude, int id )
+    {
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(AdditionalAddreessesDto.ShopNumber), shopNumber);
+        parameters.Add(nameof(AdditionalAddreessesDto.Description), description);
+        parameters.Add(nameof(AdditionalAddreessesDto.DeliveryInfo), deliveryInfo);
+        parameters.Add(nameof(AdditionalAddreessesDto.MapCoordinatesLongitude), longitude);
+        parameters.Add(nameof(AdditionalAddreessesDto.MapCoordinatesLatitude), latitude);
+        parameters.Add(nameof(AdditionalAddreessesDto.Id), id);
+
+        Modal.Show<EditAddAddressComponent>("Edit Address", parameters);
+    }
+    void DeleteAddAddress(float shopNumber, string description, string deliveryInfo, string longitude, string latitude, int id)
+    {
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(AdditionalAddreessesDto.ShopNumber), shopNumber);
+        parameters.Add(nameof(AdditionalAddreessesDto.Description), description);
+        parameters.Add(nameof(AdditionalAddreessesDto.DeliveryInfo), deliveryInfo);
+        parameters.Add(nameof(AdditionalAddreessesDto.MapCoordinatesLongitude), longitude);
+        parameters.Add(nameof(AdditionalAddreessesDto.MapCoordinatesLatitude), latitude);
+        parameters.Add(nameof(AdditionalAddreessesDto.Id), id);
+
+        Modal.Show<DeleteAddAddressComponent>("Delete Address", parameters);
+    }
+    void AddAddAddress(string id)
+    {
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(AdditionalAddreessesDto.ShopNumber), float.Parse(id));
+
+        Modal.Show<AddAddAddressComponent>("Add Address", parameters);
+    }
+    void AddRequest(string id)
+    {
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(TicketDto.ShopNumber), id);
+
+        Modal.Show<AddRequestComponent>("Add Request", parameters);
+    }
+
+
+
+
+
+
+}
+
+

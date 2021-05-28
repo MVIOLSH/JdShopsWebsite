@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Blazored.LocalStorage;
+using Blazored.Modal;
 using JdShopsWebsite.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 
@@ -30,6 +31,7 @@ namespace JdShopsWebsite
             builder.Services.AddBlazoredLocalStorage();
             builder.Services.AddAuthorizationCore();
             builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddBlazoredModal();
             var host = builder.Build();
             _ = new JwtPayload();
             await builder.Build().RunAsync();

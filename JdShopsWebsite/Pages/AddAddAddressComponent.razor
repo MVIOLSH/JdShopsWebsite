@@ -1,0 +1,78 @@
+﻿@using Flurl
+@using System.Net
+@using Bunit.Extensions
+@inject HttpClient Http
+@inject NavigationManager navMan
+
+
+
+<div class="simple-form">
+    <div class="form-group">
+        <label for="ShopNumber" style="font-weight:bold">Shop Number</label><br />
+        <input @bind="ShopNumber" type="text" class="form-control" id="first-name" placeholder="Enter the Shop Number" />
+    </div>
+
+    <div class="form-group">
+        <label for="Description" style="font-weight:bold">Description</label><br />
+        <input @bind="Description" type="text" class="form-control" id="last-name" placeholder="Enter the Description" />
+    </div>
+    <div class="form-group">
+        <label for="DeliveryInfo" style="font-weight:bold">Delivery Info</label><br />
+        <input @bind="DeliveryInfo" type="text" class="form-control" id="last-name" placeholder="Enter the Delivery Info" />
+    </div>
+    <div class="form-group">
+        <label for="Longitude" style="font-weight:bold">Longitude</label><br />
+        <input @bind="MapCoordinatesLongitude" type="text" class="form-control" id="last-name" placeholder="Enter the Longitude" />
+    </div>
+    <div class="form-group">
+        <label for="latitude" style="font-weight:bold">Latitude</label><br />
+        <input @bind="MapCoordinatesLatitude" type="text" class="form-control" id="last-name" placeholder="Enter the Latitude" />
+    </div>
+
+
+    <button @onclick="SubmitForm" class="btn btn-primary">Submit</button>
+    <button @onclick="Cancel" class="btn btn-secondary">Cancel</button>
+</div>
+
+
+@code {
+
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+
+    [Parameter]
+    public float ShopNumber { get; set; }
+    public int Id { get; set; }
+    public string Description { get; set; }
+    public string DeliveryInfo { get; set; }
+    public string MapCoordinatesLongitude { get; set; }
+    public string MapCoordinatesLatitude { get; set; }
+
+    void SubmitForm()
+    {
+        ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+
+        var newAddress = new AdditionalAddreessesDto()
+        {
+            
+            Description = Description,
+            DeliveryInfo = DeliveryInfo,
+            ShopNumber = ShopNumber,
+            MapCoordinatesLatitude = MapCoordinatesLatitude,
+            MapCoordinatesLongitude = MapCoordinatesLongitude
+
+        };
+        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/shops/", ShopNumber.ToString(), "/additional/");
+        Http.PostAsJsonAsync(url, newAddress);
+        var url2 = Url.Combine("/shopDetails", ShopNumber.ToString());
+        navMan.NavigateTo(url2);
+        StateHasChanged();
+    }
+
+    void Cancel()
+    {
+        ModalInstance.CancelAsync();
+
+    }
+
+
+}

@@ -1,0 +1,88 @@
+﻿@using Flurl
+@using System.Net
+@using Bunit.Extensions
+@inject HttpClient Http
+@inject NavigationManager navMan
+
+
+    
+    <div class="simple-form">
+        <div class="form-group">
+            <label for="ShopNumber" style="font-weight:bold">Shop Number</label><br/>
+            <label>Current value:  @ShopNumber </label>
+            <input @bind="ShopNumber" type="text" class="form-control" id="first-name" placeholder="Enter new Shop Number" />
+        </div>
+
+        <div class="form-group">
+            <label for="Description" style="font-weight:bold">Description</label><br/>
+            <label>Current value: @Description </label>
+            <input @bind="Description" type="text" class="form-control" id="last-name" placeholder="Enter New Description" />
+        </div>
+        <div class="form-group">
+            <label for="DeliveryInfo" style="font-weight:bold">Delivery Info</label><br/>
+            <label>Current value: @DeliveryInfo </label>
+            <input @bind="DeliveryInfo" type="text" class="form-control" id="last-name" placeholder="Enter New Delivery Info" />
+        </div>
+        <div class="form-group">
+            <label for="Longitude" style="font-weight:bold">Longitude</label><br/>
+            <label>Current value: @MapCoordinatesLongitude </label>
+            <input @bind="MapCoordinatesLongitude" type="text" class="form-control" id="last-name" placeholder="Enter New Longitude" />
+        </div>
+        <div class="form-group">
+            <label for="latitude" style="font-weight:bold">Latitude</label><br/>
+            <label>Current value: @MapCoordinatesLatitude </label>
+            <input @bind="MapCoordinatesLatitude" type="text" class="form-control" id="last-name" placeholder="Enter New Latitude" />
+        </div>
+        
+
+        <button @onclick="SubmitForm" class="btn btn-primary">Submit</button>
+        <button @onclick="Cancel" class="btn btn-secondary">Cancel</button>
+    </div>
+
+
+@code {
+
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+
+    [Parameter]
+    public float ShopNumber { get; set; }
+    [Parameter]
+    public int Id { get; set; }
+    [Parameter]
+    public string Description { get; set; }
+    [Parameter]
+    public string DeliveryInfo { get; set; }
+    [Parameter]
+    public string MapCoordinatesLongitude { get; set; }
+    [Parameter]
+    public string MapCoordinatesLatitude { get; set; }
+
+    void SubmitForm()
+    {
+        ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+
+        var newAddress = new AdditionalAddreessesDto()
+        {
+            Id = Id,
+            Description = Description,
+            DeliveryInfo = DeliveryInfo,
+            ShopNumber = ShopNumber,
+            MapCoordinatesLatitude = MapCoordinatesLatitude,
+            MapCoordinatesLongitude = MapCoordinatesLongitude
+
+        };
+        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/shops/", ShopNumber.ToString(), "/additional/", Id.ToString());
+        Http.PutAsJsonAsync(url, newAddress);
+        var url2 = Url.Combine("/shopDetails", ShopNumber.ToString());
+        navMan.NavigateTo(url2);
+        StateHasChanged();
+    }
+
+    void Cancel()
+    {
+        ModalInstance.CancelAsync();
+
+    }
+
+
+}

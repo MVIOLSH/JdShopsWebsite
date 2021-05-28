@@ -64,11 +64,14 @@ namespace JdShopsWebsite.Services
             {
                 UserId= int.Parse(tokenS.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value),
                  Role= tokenS.Claims.First(c => c.Type == ClaimTypes.Role).Value,
-                UserName = tokenS.Claims.First(c => c.Type == ClaimTypes.Name).Value
+                UserName = tokenS.Claims.First(c => c.Type == ClaimTypes.Name).Value, 
+                IsSuccesfull = true
+
             };
             
             if (!response.IsSuccessStatusCode)
             {
+                loginResult.IsSuccesfull = false;
                 return loginResult ;
             }
 
@@ -76,6 +79,7 @@ namespace JdShopsWebsite.Services
             ((CustomAuthStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated(loginResult.UserName);
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", json);
 
+            
             return loginResult;
         }
 
