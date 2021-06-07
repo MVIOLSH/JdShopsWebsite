@@ -1,0 +1,17 @@
+﻿* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+} 
+
+.dashboardPostTitle{
+     padding: 10px;
+     margin: 10px;
+     font-size: 1.5rem;
+     font-weight:bold;
+     }
+.dashboardPost{
+    padding: 10px;
+    margin: 20px;
+   
+}

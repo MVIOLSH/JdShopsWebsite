@@ -1,0 +1,61 @@
+﻿@page "/users"
+@using Flurl
+@inject HttpClient Http
+
+<h3>Users</h3>
+
+
+@if (users == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead class="thead-light">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Surname</th>
+            <th>Email</th>
+            <th>Active Account</th>
+            <th>Role</th>
+            <th>More Details</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var user in users)
+        {
+            <tr>
+                <td>@user.Id</td>
+                <td>@user.Fname</td>
+                <td>@user.Lname</td>
+                <td>@user.Email</td>
+                <td>@user.IsValidated</td>
+                <td>@user.Role</td>
+                <td><button class="btn btn-primary">More Details</button></td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Shared.Users> users { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        users = await Http.GetFromJsonAsync<List<Shared.Users>>("https://jdshops-api-app.azurewebsites.net/api/account/users");
+    }
+
+    private void NavigateToShopDetails(float id)
+    {
+
+        //var url2 = Url.Combine($"/shopDetails/", id.ToString());
+        //navigationManager.NavigateTo(url2, true);
+
+    }
+
+
+
+}

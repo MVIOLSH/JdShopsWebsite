@@ -21,11 +21,13 @@
 }
 else
 {
-    <div class="form-group">
-        <input class="form-control" type="text" placeholder="Search by Shop Number...."
-               @bind="Filter"
-               @bind:event="oninput">
-    </div>
+<div class="form-group">
+    <input class="form-control" type="text" placeholder="Search by Shop Number...."
+           @bind="Filter"
+           @bind:event="oninput">
+    <br />
+    <AuthorizeView Roles="Admin, AdvancedUser"><button class="btn btn-primary" @onclick="()=>AddNewShop() "> Add New Shop </button></AuthorizeView>  <button class="btn btn-primary" @onclick="()=>RequestToAddNewShop() "> Add ticket to Add New Shop </button>
+</div>
     <table class="table table-striped">
         <thead class="thead-light">
             <tr>
@@ -62,7 +64,8 @@ else
 
 @code
 {
-   
+    [CascadingParameter] public IModalService Modal { get; set; }
+
     private List<ShopDto> shops;
 
     protected override async Task OnInitializedAsync()
@@ -71,7 +74,6 @@ else
 
     }
 
-    //<td><button class="btn btn-primary" @onclick="()=>NavigateToShopDetails(shop.ShopNumber)"> More details </button></td>
 
 
 
@@ -107,6 +109,20 @@ else
     }
 
     public string Filter { get; set; }
+
+    void AddNewShop()
+    {
+
+        Modal.Show<AddNewShopComponent>("Add Shop");
+
+    }
+    void RequestToAddNewShop()
+    {
+
+        Modal.Show<RequestToAddNewShopComponent>("Request to Add the Shop");
+
+    }
+
 
 
 }

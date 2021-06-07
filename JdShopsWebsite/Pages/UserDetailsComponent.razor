@@ -1,0 +1,158 @@
+﻿@page "/userDetails/{id}"
+@using System.Net
+@using Bunit.Extensions
+@using Flurl
+@using Blazored
+@using Blazored.Modal
+@using Blazored.Modal.Services
+@using System.IO
+@using System.Security.Permissions
+@using Microsoft.AspNetCore.Http
+@using Microsoft.EntityFrameworkCore.Migrations
+
+@inject HttpClient Http
+@inject NavigationManager navMan
+
+
+
+<h3><center>ShopDetails</center></h3>
+
+
+@if (users == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead class="thead-light">
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Surname</th>
+                <th>Email</th>
+                <th>Active Account</th>
+                <th>Role</th>
+                <th>More Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in users)
+            {
+                <tr>
+                    <td>@user.Id</td>
+                    <td>@user.Fname</td>
+                    <td>@user.Lname</td>
+                    <td>@user.Email</td>
+                    <td>@user.IsValidated</td>
+                    <td>@user.Role</td>
+                    <td>@user.RoleId</td>
+                    <td><button class="btn btn-primary" style="margin: 5px" @onclick="@(()=>EditUser(@user.Fname, @user.Lname, @user.Role, @user.Email, @user.RoleId, @user.Id))">Change User</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@code
+{
+    [Parameter]
+    public string id { get; set; }
+
+    public List<Shared.Users> users { get; set; }
+
+    protected override void OnParametersSet()
+    {
+
+        var test = id;
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/account/users/", id.ToString());
+        users = await Http.GetFromJsonAsync<List<Shared.Users>>(url);
+    }
+
+
+    [CascadingParameter] public IModalService Modal { get; set; }
+
+    async void EditUser(string fName, string lName, string Role, string email, int roleid, int id)
+    {
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(Shared.Users.Id),id );
+        parameters.Add(nameof(Shared.Users.Fname), fName);
+        parameters.Add(nameof(Shared.Users.Lname), lName);
+        parameters.Add(nameof(Shared.Users.Role), Role);
+        parameters.Add(nameof(Shared.Users.RoleId), roleid);
+        parameters.Add(nameof(Shared.Users.Email), email);
+
+        var modal = Modal.Show<EditAddAddressComponent>("Edit Additional Address", parameters);
+
+    }
+
+    void DeleteAddAddress(string shopNumber, string description, string deliveryInfo, string longitude, string latitude, int id)
+    {
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(AdditionalAddreessesDto.ShopNumber), shopNumber);
+        parameters.Add(nameof(AdditionalAddreessesDto.Description), description);
+        parameters.Add(nameof(AdditionalAddreessesDto.DeliveryInfo), deliveryInfo);
+        parameters.Add(nameof(AdditionalAddreessesDto.MapCoordinatesLongitude), longitude);
+        parameters.Add(nameof(AdditionalAddreessesDto.MapCoordinatesLatitude), latitude);
+        parameters.Add(nameof(AdditionalAddreessesDto.Id), id);
+
+        Modal.Show<DeleteAddAddressComponent>("Delete Address", parameters);
+
+    }
+
+    void ResetPass(string id)
+    {
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(AdditionalAddreessesDto.ShopNumber), float.Parse(id));
+
+        Modal.Show<AddAddAddressComponent>("Add Address", parameters);
+    }
+
+    void AddRequest(string id)
+    {
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(TicketDto.ShopNumber), id);
+
+        Modal.Show<AddRequestComponent>("Add Request", parameters);
+    }
+
+    void EditShop(float shopNumber, string facia, string deliveryInfo, string longitude, string latitude, int id, string phoneNumber, string town)
+    {
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(ShopDto.ShopNumber), shopNumber);
+        parameters.Add(nameof(ShopDto.Facia), facia);
+        parameters.Add(nameof(ShopDto.DeliveryInfo), deliveryInfo);
+        parameters.Add(nameof(ShopDto.MapCoordinatesLongitude), longitude);
+        parameters.Add(nameof(ShopDto.MapCoordinatesLatitude), latitude);
+        parameters.Add(nameof(ShopDto.Id), id);
+        parameters.Add(nameof(ShopDto.PhoneNumber), phoneNumber);
+        parameters.Add(nameof(ShopDto.Town), town);
+
+        var window = Modal.Show<EditShopComponent>("Edit Address", parameters);
+
+    }
+    void DeleteShop(float shopNumber)
+    {
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(ShopDto.ShopNumber), shopNumber);
+
+        Modal.Show<DeleteShopComponent>("Delete Shop", parameters);
+
+    }
+
+
+
+
+
+
+
+
+}
+
+

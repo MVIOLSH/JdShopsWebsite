@@ -1,5 +1,6 @@
 ﻿@using Flurl
 @inject HttpClient Http
+@inject NavigationManager navMan
 
 <div class="simple-form">
 <div class="form-group">
@@ -26,14 +27,17 @@
     [Parameter]
     public string MapCoordinatesLatitude { get; set; }
 
-    void SubmitForm()
+    async void SubmitForm()
     {
         ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
-        
+
         var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/shops/", ShopNumber.ToString(), "/additional/", Id.ToString());
         Http.DeleteAsync(url);
-        var url2 = Url.Combine("/shopDetails", ShopNumber.ToString());
-     
+        var url2 = Url.Combine("/shopDetails/", ShopNumber.ToString());
+        await Task.Delay(500);
+        navMan.NavigateTo(url2, true);
+
+
     }
 
     void Cancel()

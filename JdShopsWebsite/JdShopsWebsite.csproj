@@ -26,9 +26,15 @@
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.11.1" />
     <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
+    <PackageReference Include="Tewr.Blazor.FileReader" Version="3.0.0.20340" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Pages\AdditionalAddres\" />
+    <Folder Include="Pages\LoginAndRegister\" />
+    <Folder Include="Pages\Shops\" />
+    <Folder Include="Pages\Tickets\" />
+    <Folder Include="Pages\Users\" />
     <Folder Include="wwwroot\css\img\" />
   </ItemGroup>
 

@@ -1,0 +1,119 @@
+﻿@page "/images{shopNumber}"
+@using Flurl
+@using System.IO
+@using Microsoft.AspNetCore.Http;
+@using Tewr.Blazor.FileReader
+@inject HttpClient Http
+@inject NavigationManager navMan
+@inject IFileReaderService filereader
+
+
+<div class="simple-form">
+    <div class="form-group">
+        <label style="font-weight:bold">Plaese pick a new picture </label><br />
+        <label style="font-weight:bold">from your device for shop Number: @shopNumber</label><br />
+        <input type="file" @ref="inputReference" @onchange="async ()=> await OpenFile()" />
+        <br />
+        <ul>
+            <li>File Name: @filename </li>
+            <li>Size: @filesize </li>
+            <li>Type: @filetype </li>
+        </ul>
+
+        @if (!string.IsNullOrEmpty(message))
+        {
+            <div class="alert alert-success">
+                File has been uploaded!
+            </div>
+        }
+
+        @if (imgPath != null)
+        {
+            <img style="width:150px; height:150px" src="" />
+
+        }
+
+        <img src="" />
+        <label style="font-weight:bold">Please provide the description: </label>
+        <input type="text" @bind="Description" class="form-control" id="img-description" placeholder="Enter the description" />
+    </div>
+    <button @onclick="SubmitForm" class="btn btn-primary">Save Image</button>
+    <button @onclick="Cancel" class="btn btn-secondary">Cancel</button>
+</div>
+
+@code {
+
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+
+    [Parameter]
+    public float shopNumber { get; set; }
+
+    ElementReference inputReference;
+    string message = string.Empty;
+    string imgPath = null;
+    string filename = string.Empty;
+    string filesize = string.Empty;
+    string filetype = string.Empty;
+    string Description = string.Empty;
+
+    Stream filestream = null;
+
+    async Task OpenFile()
+    {
+        var file = (await filereader.CreateReference(inputReference).EnumerateFilesAsync()).FirstOrDefault();
+
+        if (file == null)
+        {
+            return;
+        }
+
+        var fileInfo = await file.ReadFileInfoAsync();
+        filename = fileInfo.Name;
+        filesize = $"{fileInfo.Size}bytes";
+        filetype = fileInfo.Type;
+
+        using (var ms = await file.CreateMemoryStreamAsync((int)fileInfo.Size))
+        {
+            filestream = ms;
+        }
+
+    }
+
+
+
+
+    async void SubmitForm()
+    {
+
+        var content = new MultipartFormDataContent();
+        content.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("form-data");
+        content.Add(new StreamContent(filestream, (int)filestream.Length), "file", filename);
+        content.Add(new StringContent(Description), "description");
+        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/images", shopNumber.ToString());
+        var response = await Http.PostAsJsonAsync(url, content);
+
+        var url2 = Url.Combine("/shops", shopNumber.ToString());
+        await Task.Delay(500);
+        navMan.NavigateTo(url2, true);
+
+        if(response.IsSuccessStatusCode)
+        {
+            var uploadedFileName = await response.Content.ReadAsStringAsync();
+           // ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+
+        }
+
+
+
+
+
+
+    }
+
+    void Cancel()
+    {
+        ModalInstance.CancelAsync();
+
+    }
+
+}

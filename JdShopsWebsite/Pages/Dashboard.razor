@@ -1,0 +1,41 @@
+﻿@using System.Net
+@inject HttpClient Http
+
+<div style="font-size: 2.5rem; font-weight: bold; font-style: italic;"><center>Dashboard</center></div>
+@if (announcements == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    @foreach (var post in announcements)
+    {
+        <div class="dashboardPost">
+            <table>
+                <thead class="dashboardPostTitle">@post.Title</thead>
+                <tbody>
+                <tr>Posted by: @post.Type</tr>
+                <tr>@post.Content</tr>
+                </tbody>
+                <tfoot>
+                <tr>@post.DateCreated</tr>
+                </tfoot>
+            </table>
+        </div>
+        <li class="dropdown-divider"></li>
+    }
+
+}
+    @code {
+private List<AnnouncementDto> announcements { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        announcements = await Http.GetFromJsonAsync<List<AnnouncementDto>>("https://jdshops-api-app.azurewebsites.net/api/announcements");
+    }
+ 
+
+
+
+
+    }

@@ -1,0 +1,49 @@
+﻿@page "/tickets"
+@inject HttpClient Http
+
+<h1>Tickets System</h1>
+
+
+
+@if (tickets == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+<table class="table table-striped">
+    <thead class="thead-light">
+        <tr>
+            <th>ID</th>
+            <th>Shop Number</th>
+            <th>Status</th>
+            <th>Title</th>
+            <th>More Details</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var ticket in tickets)
+        {
+            <tr>
+                <td>@ticket.Id</td>
+                <td>@ticket.ShopNumber</td>
+                <td>@ticket.Status</td>
+                <td>@ticket.Title</td>
+                <td><button class="btn btn-primary">More Details</button></td>
+            </tr>
+        }
+    </tbody>
+</table>
+}
+
+@code {
+    private List<TicketDto> tickets { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        tickets = await Http.GetFromJsonAsync<List<TicketDto>>("https://jdshops-api-app.azurewebsites.net/api/tickets");
+    }
+
+    
+    
+}

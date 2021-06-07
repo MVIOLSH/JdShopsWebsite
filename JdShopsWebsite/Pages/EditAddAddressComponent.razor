@@ -10,32 +10,32 @@
         <div class="form-group">
             <label for="ShopNumber" style="font-weight:bold">Shop Number</label><br/>
             <label>Current value:  @ShopNumber </label>
-            <input @bind="ShopNumber" type="text" class="form-control" id="first-name" placeholder="Enter new Shop Number" />
+            <input @bind="ShopNumber" type="text" class="form-control" id="shop-number" placeholder="Enter new Shop Number" />
         </div>
 
         <div class="form-group">
             <label for="Description" style="font-weight:bold">Description</label><br/>
             <label>Current value: @Description </label>
-            <input @bind="Description" type="text" class="form-control" id="last-name" placeholder="Enter New Description" />
+            <input @bind="Description" type="text" class="form-control" id="description" placeholder="Enter New Description" />
         </div>
         <div class="form-group">
             <label for="DeliveryInfo" style="font-weight:bold">Delivery Info</label><br/>
             <label>Current value: @DeliveryInfo </label>
-            <input @bind="DeliveryInfo" type="text" class="form-control" id="last-name" placeholder="Enter New Delivery Info" />
+            <input @bind="DeliveryInfo" type="text" class="form-control" id="delivery-info" placeholder="Enter New Delivery Info" />
         </div>
         <div class="form-group">
             <label for="Longitude" style="font-weight:bold">Longitude</label><br/>
             <label>Current value: @MapCoordinatesLongitude </label>
-            <input @bind="MapCoordinatesLongitude" type="text" class="form-control" id="last-name" placeholder="Enter New Longitude" />
+            <input @bind="MapCoordinatesLongitude" type="text" class="form-control" id="longitude" placeholder="Enter New Longitude" />
         </div>
         <div class="form-group">
             <label for="latitude" style="font-weight:bold">Latitude</label><br/>
             <label>Current value: @MapCoordinatesLatitude </label>
-            <input @bind="MapCoordinatesLatitude" type="text" class="form-control" id="last-name" placeholder="Enter New Latitude" />
+            <input @bind="MapCoordinatesLatitude" type="text" class="form-control" id="latitude" placeholder="Enter New Latitude" />
         </div>
         
 
-        <button @onclick="SubmitForm" class="btn btn-primary">Submit</button>
+        <button @onclick="save" class="btn btn-primary">Submit</button>
         <button @onclick="Cancel" class="btn btn-secondary">Cancel</button>
     </div>
 
@@ -57,11 +57,12 @@
     [Parameter]
     public string MapCoordinatesLatitude { get; set; }
 
-    void SubmitForm()
-    {
-        ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+    public HttpResponseMessage response { get; set; }
 
-        var newAddress = new AdditionalAddreessesDto()
+    
+    async void save()
+    {
+    var newAddress = new AdditionalAddreessesDto()
         {
             Id = Id,
             Description = Description,
@@ -74,8 +75,9 @@
         var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/shops/", ShopNumber.ToString(), "/additional/", Id.ToString());
         Http.PutAsJsonAsync(url, newAddress);
         var url2 = Url.Combine("/shopDetails", ShopNumber.ToString());
-        navMan.NavigateTo(url2);
-        StateHasChanged();
+        ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+        await Task.Delay(500);
+        navMan.NavigateTo(url2, true);
     }
 
     void Cancel()

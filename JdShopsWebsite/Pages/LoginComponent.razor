@@ -48,7 +48,8 @@
 
         if (result != null)
         {
-            NavigationManager.NavigateTo("/");
+            NavigationManager.NavigateTo("/", true);
+            StateHasChanged();
         }
         else
         {

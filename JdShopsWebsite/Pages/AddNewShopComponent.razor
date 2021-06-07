@@ -11,14 +11,30 @@
         <label for="ShopNumber" style="font-weight:bold">Shop Number</label><br />
         <input @bind="ShopNumber" type="text" class="form-control" id="first-name" placeholder="Enter the Shop Number" />
     </div>
+    <div class="form-group">
+        <label for="Facia" style="font-weight:bold">Choose the Shop Brand</label><br />
+        <select class="form-select form-select-sm" aria-label=".form-select-sm example" @bind="Facia">
+            <option value="@faciaType.JD">JD Sports</option>
+            <option value="@faciaType.Blacks">Blacks</option>
+            <option value="@faciaType.Size">Size?</option>
+            <option value="@faciaType.Millets">Millets</option>
+            <option value="@faciaType.Scotts">Scotts</option>
+            <option value="@faciaType.Tessuti">Tessuti</option>
+            <option value="@faciaType.Ultimate">Ultimate Outdoors</option>
+        </select>
+    </div>
 
     <div class="form-group">
-        <label for="Description" style="font-weight:bold">Description</label><br />
-        <input @bind="Description" type="text" class="form-control" id="last-name" placeholder="Enter the Description" />
+        <label for="Town" style="font-weight:bold">Description</label><br />
+        <input @bind="Town" type="text" class="form-control" id="last-name" placeholder="Enter the Town" />
     </div>
     <div class="form-group">
         <label for="DeliveryInfo" style="font-weight:bold">Delivery Info</label><br />
         <input @bind="DeliveryInfo" type="text" class="form-control" id="last-name" placeholder="Enter the Delivery Info" />
+    </div>
+    <div class="form-group">
+        <label for="PhoneNumber" style="font-weight:bold">Phone Number</label><br />
+        <input @bind="PhoneNumber" type="text" class="form-control" id="last-name" placeholder="Enter the Phone Number" />
     </div>
     <div class="form-group">
         <label for="Longitude" style="font-weight:bold">Longitude</label><br />
@@ -39,31 +55,35 @@
 
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
 
-    [Parameter]
     public float ShopNumber { get; set; }
     public int Id { get; set; }
-    public string Description { get; set; }
+    public string Town { get; set; }
+    public string PhoneNumber { get; set; }
     public string DeliveryInfo { get; set; }
     public string MapCoordinatesLongitude { get; set; }
     public string MapCoordinatesLatitude { get; set; }
+    public faciaType Facia { get; set; } = faciaType.JD;
+    public enum faciaType { JD, Tessuti, Millets, Blacks, Size, Scotts, Ultimate }
 
     async void SubmitForm()
     {
         ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
 
-        var newAddress = new AdditionalAddreessesDto()
+        var newShop = new ShopDto()
         {
-
-            Description = Description,
-            DeliveryInfo = DeliveryInfo,
             ShopNumber = ShopNumber,
+            Town = Town,
+            PhoneNumber = PhoneNumber,
+            DeliveryInfo = DeliveryInfo,
+            Facia = Facia.ToString(),
             MapCoordinatesLatitude = MapCoordinatesLatitude,
             MapCoordinatesLongitude = MapCoordinatesLongitude
 
+
         };
-        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/shops/", ShopNumber.ToString(), "/additional/");
-        Http.PostAsJsonAsync(url, newAddress);
-        var url2 = Url.Combine("/shopDetails", ShopNumber.ToString());
+        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/shops/");
+        Http.PostAsJsonAsync(url, newShop);
+        var url2 = Url.Combine("/shops/");
         await Task.Delay(500);
         navMan.NavigateTo(url2, true);
 

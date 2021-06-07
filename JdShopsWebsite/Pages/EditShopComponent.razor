@@ -1,0 +1,115 @@
+﻿@using Flurl
+@using System.Net
+@using Bunit.Extensions
+@inject HttpClient Http
+@inject NavigationManager navMan
+
+
+
+<div class="simple-form">
+    <div class="form-group">
+        <label for="ShopNumber" style="font-weight:bold">Shop Number</label><br />
+        <label for="ShopNumber" style="font-weight:bold">Current Value: @ShopNumber</label><br />
+        <input @bind="ShopNumber" type="text" class="form-control" id="first-name" placeholder="Enter the Shop Number" />
+    </div>
+    <div class="form-group">
+        <label for="Facia" style="font-weight:bold">Choose the Shop Brand</label><br />
+        <label for="Facia" style="font-weight:bold">Current Value: @Facia</label><br />
+        <select class="form-select form-select-sm" aria-label=".form-select-sm example" @bind="Facia">
+            <option value="@faciaTypeEnum.JD">JD Sports</option>
+            <option value="@faciaTypeEnum.Blacks">Blacks</option>
+            <option value="@faciaTypeEnum.Size">Size?</option>
+            <option value="@faciaTypeEnum.Millets">Millets</option>
+            <option value="@faciaTypeEnum.Scotts">Scotts</option>
+            <option value="@faciaTypeEnum.Tessuti">Tessuti</option>
+            <option value="@faciaTypeEnum.Ultimate">Ultimate Outdoors</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="Town" style="font-weight:bold">Town</label><br />
+        <label for="Town" style="font-weight:bold">Curent Value: @Town</label><br />
+        <input @bind="Town" type="text" class="form-control" id="last-name" placeholder="Enter the Town" />
+    </div>
+    <div class="form-group">
+        <label for="DeliveryInfo" style="font-weight:bold">Delivery Info</label><br />
+        <label for="DeliveryInfo" style="font-weight:bold">Curent Value: @DeliveryInfo </label><br />
+        <input @bind="DeliveryInfo" type="text" class="form-control" id="last-name" placeholder="Enter the Delivery Info" />
+    </div>
+    <div class="form-group">
+        <label for="PhoneNumber" style="font-weight:bold">Phone Number</label><br />
+        <label for="PhoneNumber" style="font-weight:bold">Curent Value: @PhoneNumber </label><br />
+        <input @bind="PhoneNumber" type="text" class="form-control" id="last-name" placeholder="Enter the Phone Number" />
+    </div>
+    <div class="form-group">
+        <label for="Longitude" style="font-weight:bold">Longitude</label><br />
+        <label for="Longitude" style="font-weight:bold">Curent Value: @MapCoordinatesLongitude </label><br />
+        <input @bind="MapCoordinatesLongitude" type="text" class="form-control" id="last-name" placeholder="Enter the Longitude" />
+    </div>
+    <div class="form-group">
+        <label for="latitude" style="font-weight:bold">Latitude</label><br />
+        <label for="Latitude" style="font-weight:bold">Curent Value: @MapCoordinatesLatitude</label><br />
+        <input @bind="MapCoordinatesLatitude" type="text" class="form-control" id="last-name" placeholder="Enter the Latitude" />
+    </div>
+
+
+    <button @onclick="SubmitForm" class="btn btn-primary">Submit</button>
+    <button @onclick="Cancel" class="btn btn-secondary">Cancel</button>
+</div>
+
+
+@code {
+
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+
+    [Parameter]
+    public float ShopNumber { get; set; }
+    [Parameter]
+    public int Id { get; set; }
+    [Parameter]
+    public string Town { get; set; }
+    [Parameter]
+    public string PhoneNumber { get; set; }
+    [Parameter]
+    public string DeliveryInfo { get; set; }
+    [Parameter]
+    public string MapCoordinatesLongitude { get; set; }
+    [Parameter]
+    public string MapCoordinatesLatitude { get; set; }
+    [Parameter]
+    public string Facia { get; set; }
+    public faciaTypeEnum FaciaType { get; set; } = faciaTypeEnum.JD;
+    public enum faciaTypeEnum { JD, Tessuti, Millets,Blacks, Size, Scotts, Ultimate }
+
+    async void SubmitForm()
+    {
+        ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+
+        var newShop = new ShopDto()
+        {
+            ShopNumber = ShopNumber,
+            Town = Town,
+            PhoneNumber = PhoneNumber,
+            DeliveryInfo = DeliveryInfo,
+            Facia = FaciaType.ToString(),
+            MapCoordinatesLatitude = MapCoordinatesLatitude,
+            MapCoordinatesLongitude = MapCoordinatesLongitude
+
+
+        };
+        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/shops/", ShopNumber.ToString());
+        Http.PutAsJsonAsync(url, newShop);
+        var url2 = Url.Combine("/shops/");
+        await Task.Delay(500);
+        navMan.NavigateTo(url2, true);
+
+    }
+
+    void Cancel()
+    {
+        ModalInstance.CancelAsync();
+
+    }
+
+
+}

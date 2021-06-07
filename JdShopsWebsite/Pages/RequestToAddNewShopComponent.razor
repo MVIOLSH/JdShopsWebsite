@@ -14,10 +14,9 @@
     <div class="form-group">
         <label for="TypeOfRequest" style="font-weight:bold">Choose the tpe of Request</label><br />
         <select class="form-select form-select-sm" aria-label=".form-select-sm example" @bind="TypeOfRequest">
-            <option value="@typesOfRequest.ChangeInShopDetails">Change shop</option>
-            <option value="@typesOfRequest.ChangeInAdditionalAddress">Change Additional Address</option>
-            <option value="@typesOfRequest.Delete">Delete</option>
-            </select>
+            <option value="@typesOfRequest.NewShop">Change shop</option>
+           
+        </select>
     </div>
     <div class="form-group">
         <label for="Title" style="font-weight:bold">The title of Request</label><br />
@@ -28,7 +27,7 @@
         <label for="Description" style="font-weight:bold">Description</label><br />
         <input @bind="Description" type="text" class="form-control" id="last-name" placeholder="Enter the Description" />
     </div>
-   
+
     <button @onclick="SubmitForm" class="btn btn-primary">Submit</button>
     <button @onclick="Cancel" class="btn btn-secondary">Cancel</button>
 </div>
@@ -45,15 +44,15 @@
     public int Id { get; set; }
     public string Description { get; set; }
     public string Title { get; set; }
-    public typesOfRequest TypeOfRequest { get; set; } = typesOfRequest.ChangeInShopDetails;
-    public enum typesOfRequest{ ChangeInShopDetails, ChangeInAdditionalAddress, Delete }
+    public typesOfRequest TypeOfRequest { get; set; } = typesOfRequest.NewShop;
+    public enum typesOfRequest { NewShop}
 
     public string Status { get; set; } = "New";
 
 
 
 
-    async void SubmitForm()
+    void SubmitForm()
     {
         ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
 
@@ -69,9 +68,8 @@
         };
         var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/tickets/");
         Http.PostAsJsonAsync(url, newTicket);
-        var url2 = Url.Combine("/shops/");
-        await Task.Delay(500);
-        navMan.NavigateTo(url2, true);
+        
+        
 
     }
 

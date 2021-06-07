@@ -11,8 +11,7 @@
 @using Microsoft.EntityFrameworkCore.Migrations
 
 @inject HttpClient Http
-
-
+@inject NavigationManager navMan
 
 <h3><center>ShopDetails</center></h3>
 
@@ -63,12 +62,50 @@ else
                 </tr>
             </tbody>
         </table>
-        <img style="max-width: 500px; max-height:500px" src="MEDIA/@shop.ShopNumber/@imgurl" />
-        <br />
 
+        @if (!listOfShopImages.IsNullOrEmpty())
+        {
+
+            <table class="table table-striped">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Image</th>
+                        <th>Decription</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var img in listOfShopImages)
+                    {
+                        <tr>
+                            <td><img style="max-width: 500px; max-height:500px" src="@GetImg(img.ShopNumber, img.FileName)" /></td>
+                            <td>@img.Description</td>
+                            <AuthorizeView Roles="Admin, AdvancedUser">
+                                <td><button class="btn btn-danger" @onclick="@(()=>DeletePictureShop(img.Id))">Delete Picture</button></td>
+                            </AuthorizeView>
+                        </tr>
+                    }
+                    <AuthorizeView Roles="Admin, AdvancedUser">
+                        <tr><button class="btn btn-secondary" style="margin-top:10px" @onclick="NavigateToImageUpload(shop.ShopNumber)">Upload New Picture</button></tr>
+                    </AuthorizeView>
+                </tbody>
+            </table>
+
+            <br />
+        }
 
         <br />
-        <button class="btn btn-primary" style="margin: 5px" @onclick="@(()=>AddRequest(id))">Request Change</button><button class="btn btn-primary" style="margin: 5px">Edit Shop Details</button><button class="btn btn-secondary" style="margin: 5px">Delete Shop </button>
+        <button class="btn btn-primary" style="margin: 5px" @onclick="@(() => AddRequest(id))">Request Change</button>
+        <AuthorizeView Roles="Admin, AdvancedUser">
+            <button class="btn btn-primary" style="margin: 5px" @onclick="@(() => EditShop
+                                                                            (shop.ShopNumber, shop.Facia, shop.DeliveryInfo,shop.MapCoordinatesLongitude, shop.MapCoordinatesLatitude, shop.Id, shop.PhoneNumber, shop.Town))">
+                Edit Shop Details
+            </button>
+            <button class="btn btn-secondary" style="margin: 5px" @onclick="@(() => DeleteShop
+                                                                              (shop.ShopNumber))">
+                Delete Shop
+            </button>
+        </AuthorizeView>
 
         <br />
 
@@ -83,52 +120,58 @@ else
                 <br />
                 <table class="table table-striped">
                     <thead class="thead-light">
-                    <tr>
-                        <th>Additional address for @address.Description</th>
+                        <tr>
+                            <th>Additional address for @address.Description</th>
 
-                    </tr>
-                    <tr>
-                        <th>Delivery Info</th>
-                        <th>Longitude</th>
-                        <th>Latitude</th>
-                        <th>Show on google maps</th>
-                        <th>Edit</th>
-                        <th>Delete</th>
-                    </tr>
+                        </tr>
+                        <tr>
+                            <th>Delivery Info</th>
+                            <th>Longitude</th>
+                            <th>Latitude</th>
+                            <th>Show on google maps</th>
+                            <AuthorizeView Roles="Admin, AdvancedUser">
+                                <th>Edit</th>
+                                <th>Delete</th>
+                            </AuthorizeView>
+                        </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td style="width: 40%">@address.DeliveryInfo</td>
-                        <td style="width: 15%">@address.MapCoordinatesLongitude</td>
-                        <td style="width: 15%">@address.MapCoordinatesLatitude</td>
-                        <td><a href="http://www.google.com/maps/place/{@address.MapCoordinatesLatitude},@address.MapCoordinatesLongitude" target="_blank"><button class="btn btn-primary">Go to map</button></a></td>
-                        <td>
-                            <button class="btn btn-primary" @onclick="@(()=>EditAddAddress(address.ShopNumber,
-                                                                          address.Description, address.DeliveryInfo,
-                                                                          address.MapCoordinatesLongitude, address.MapCoordinatesLatitude, address.Id))">
-                                Edit
-                            </button>
-                        </td>
-                        <td>
-                            <button class="btn btn-secondary" @onclick="@(()=>DeleteAddAddress(address.ShopNumber,
-                                                                            address.Description, address.DeliveryInfo,
-                                                                            address.MapCoordinatesLongitude, address.MapCoordinatesLatitude, address.Id))">
-                                Delete
-                            </button>
-                        </td>
-                    </tr>
+                        <tr>
+                            <td style="width: 40%">@address.DeliveryInfo</td>
+                            <td style="width: 15%">@address.MapCoordinatesLongitude</td>
+                            <td style="width: 15%">@address.MapCoordinatesLatitude</td>
+                            <td><a href="http://www.google.com/maps/place/{@address.MapCoordinatesLatitude},@address.MapCoordinatesLongitude" target="_blank"><button class="btn btn-primary">Go to map</button></a></td>
+                            <AuthorizeView Roles="Admin, AdvancedUser">
+                                <td>
+                                    <button class="btn btn-primary" @onclick="@(() => EditAddAddress(address.ShopNumber,
+                                                                              address.Description, address.DeliveryInfo,
+                                                                              address.MapCoordinatesLongitude, address.MapCoordinatesLatitude, address.Id))">
+                                        Edit
+                                    </button>
+                                </td>
+                                <td>
+                                    <button class="btn btn-secondary" @onclick="@(() => DeleteAddAddress(address.ShopNumber,
+                                                                                address.Description, address.DeliveryInfo,
+                                                                                address.MapCoordinatesLongitude, address.MapCoordinatesLatitude, address.Id))">
+                                        Delete
+                                    </button>
+                                </td>
+                            </AuthorizeView>
+                        </tr>
 
-                    </tbody>`
+                    </tbody>
                 </table>
-              
+
 
             }
         }
-       
+
     }
-    <button class="btn btn-primary" @onclick="@(()=>AddAddAddress(id))">
-        Add Additional Delivery Address
-    </button>
+    <AuthorizeView Roles="Admin, AdvancedUser">
+        <button class="btn btn-primary" @onclick="@(() => AddAddAddress(id))">
+            Add Additional Delivery Address
+        </button>
+    </AuthorizeView>
 }
 
 
@@ -140,14 +183,20 @@ else
     public List<ShopDto> shops { get; set; }
     public List<AdditionalAddreessesDto> addAddresses { get; set; }
     public string imgurl { get; set; }
+    public List<ImgShop> listOfShopImages { get; set; }
+    //@(()=>UploadPictureToShop(shop.ShopNumber))
 
-
-
-    protected override void OnParametersSet()
+    public async void DeletePictureShop(int id)
     {
+        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/images/", id.ToString());
+        await Http.DeleteAsync(url);
 
-        var test = id;
+    }
 
+    public void NavigateToImageUpload(float shopNumber)
+    {
+        var url = Url.Combine("/images", shopNumber.ToString);
+        navMan.NavigateTo(url, true);
     }
 
     protected override async Task OnInitializedAsync()
@@ -156,14 +205,22 @@ else
         shops = await Http.GetFromJsonAsync<List<ShopDto>>(url);
         var url2 = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/shops/", id.ToString(), "/additional");
         addAddresses = await Http.GetFromJsonAsync<List<AdditionalAddreessesDto>>(url2);
-        imgurl =id.ToString()+ ".jpg";
+        imgurl = id.ToString() + ".jpg";
 
+        var url3 = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/images", id.ToString());
+        listOfShopImages = await Http.GetFromJsonAsync<List<ImgShop>>(url3);
+    }
 
+    public Object GetImg(string shopNumber, string filename)
+    {
+        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/images", shopNumber, filename);
+        //var img = Http.GetStreamAsync(url);
+        return url;
     }
 
     [CascadingParameter] public IModalService Modal { get; set; }
 
-    void EditAddAddress(float shopNumber, string description, string deliveryInfo, string longitude, string latitude, int id )
+    async void EditAddAddress(float shopNumber, string description, string deliveryInfo, string longitude, string latitude, int id)
     {
         var parameters = new ModalParameters();
         parameters.Add(nameof(AdditionalAddreessesDto.ShopNumber), shopNumber);
@@ -173,8 +230,10 @@ else
         parameters.Add(nameof(AdditionalAddreessesDto.MapCoordinatesLatitude), latitude);
         parameters.Add(nameof(AdditionalAddreessesDto.Id), id);
 
-        Modal.Show<EditAddAddressComponent>("Edit Address", parameters);
+        var modal = Modal.Show<EditAddAddressComponent>("Edit Additional Address", parameters);
+
     }
+
     void DeleteAddAddress(float shopNumber, string description, string deliveryInfo, string longitude, string latitude, int id)
     {
         var parameters = new ModalParameters();
@@ -186,7 +245,9 @@ else
         parameters.Add(nameof(AdditionalAddreessesDto.Id), id);
 
         Modal.Show<DeleteAddAddressComponent>("Delete Address", parameters);
+
     }
+
     void AddAddAddress(string id)
     {
         var parameters = new ModalParameters();
@@ -194,6 +255,7 @@ else
 
         Modal.Show<AddAddAddressComponent>("Add Address", parameters);
     }
+
     void AddRequest(string id)
     {
         var parameters = new ModalParameters();
@@ -202,11 +264,48 @@ else
         Modal.Show<AddRequestComponent>("Add Request", parameters);
     }
 
+    void EditShop(float shopNumber, string facia, string deliveryInfo, string longitude, string latitude, int id, string phoneNumber, string town)
+    {
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(ShopDto.ShopNumber), shopNumber);
+        parameters.Add(nameof(ShopDto.Facia), facia);
+        parameters.Add(nameof(ShopDto.DeliveryInfo), deliveryInfo);
+        parameters.Add(nameof(ShopDto.MapCoordinatesLongitude), longitude);
+        parameters.Add(nameof(ShopDto.MapCoordinatesLatitude), latitude);
+        parameters.Add(nameof(ShopDto.Id), id);
+        parameters.Add(nameof(ShopDto.PhoneNumber), phoneNumber);
+        parameters.Add(nameof(ShopDto.Town), town);
 
+        var window = Modal.Show<EditShopComponent>("Edit Address", parameters);
 
+    }
 
+    void DeleteShop(float shopNumber)
+    {
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(ShopDto.ShopNumber), shopNumber);
 
+        Modal.Show<DeleteShopComponent>("Delete Shop", parameters);
 
+    }
+
+    void UploadPictureToShop(float shopNumber)
+    {
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(ImgShop.ShopNumber), shopNumber);
+
+        Modal.Show<UploadPictureShopComponent>("Upload Picture Shop", parameters);
+    }
 }
+
+
+
+
+
+
+
+
+
+
 
 

@@ -13,6 +13,7 @@ using Blazored.LocalStorage;
 using Blazored.Modal;
 using JdShopsWebsite.Services;
 using Microsoft.AspNetCore.Components.Authorization;
+using Tewr.Blazor.FileReader;
 
 namespace JdShopsWebsite
 {
@@ -30,6 +31,7 @@ namespace JdShopsWebsite
             builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
             builder.Services.AddBlazoredLocalStorage();
             builder.Services.AddAuthorizationCore();
+            builder.Services.AddFileReaderService(options => { options.UseWasmSharedBuffer = true; });
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddBlazoredModal();
             var host = builder.Build();
