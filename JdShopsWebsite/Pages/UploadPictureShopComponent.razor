@@ -1,4 +1,4 @@
-﻿@page "/images{shopNumber}"
+﻿@page "/images/{shopNumber}"
 @using Flurl
 @using System.IO
 @using Microsoft.AspNetCore.Http;
@@ -18,22 +18,8 @@
             <li>File Name: @filename </li>
             <li>Size: @filesize </li>
             <li>Type: @filetype </li>
-        </ul>
-
-        @if (!string.IsNullOrEmpty(message))
-        {
-            <div class="alert alert-success">
-                File has been uploaded!
-            </div>
-        }
-
-        @if (imgPath != null)
-        {
-            <img style="width:150px; height:150px" src="" />
-
-        }
-
-        <img src="" />
+        </ul>      
+        <br />
         <label style="font-weight:bold">Please provide the description: </label>
         <input type="text" @bind="Description" class="form-control" id="img-description" placeholder="Enter the description" />
     </div>
@@ -43,24 +29,22 @@
 
 @code {
 
-    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    
 
     [Parameter]
-    public float shopNumber { get; set; }
+    public string shopNumber { get; set; }
 
-    ElementReference inputReference;
-    string message = string.Empty;
-    string imgPath = null;
+    ElementReference inputReference;    
     string filename = string.Empty;
     string filesize = string.Empty;
     string filetype = string.Empty;
     string Description = string.Empty;
-
     Stream filestream = null;
+    IFileReference file;
 
     async Task OpenFile()
     {
-        var file = (await filereader.CreateReference(inputReference).EnumerateFilesAsync()).FirstOrDefault();
+        file = (await filereader.CreateReference(inputReference).EnumerateFilesAsync()).FirstOrDefault();
 
         if (file == null)
         {
@@ -69,20 +53,18 @@
 
         var fileInfo = await file.ReadFileInfoAsync();
         filename = fileInfo.Name;
-        filesize = $"{fileInfo.Size}bytes";
+        filesize = $"{fileInfo.Size}b";
         filetype = fileInfo.Type;
 
         using (var ms = await file.CreateMemoryStreamAsync((int)fileInfo.Size))
         {
-            filestream = ms;
+            filestream = new MemoryStream(ms.ToArray());
         }
 
     }
 
 
-
-
-    async void SubmitForm()
+    async Task SubmitForm()
     {
 
         var content = new MultipartFormDataContent();
@@ -90,30 +72,18 @@
         content.Add(new StreamContent(filestream, (int)filestream.Length), "file", filename);
         content.Add(new StringContent(Description), "description");
         var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/images", shopNumber.ToString());
-        var response = await Http.PostAsJsonAsync(url, content);
+        var response = await Http.PostAsync(url, content);
 
-        var url2 = Url.Combine("/shops", shopNumber.ToString());
+        var url2 = Url.Combine("/shopDetails", shopNumber.ToString());
         await Task.Delay(500);
         navMan.NavigateTo(url2, true);
-
-        if(response.IsSuccessStatusCode)
-        {
-            var uploadedFileName = await response.Content.ReadAsStringAsync();
-           // ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
-
-        }
-
-
-
-
-
+           
 
     }
 
     void Cancel()
     {
-        ModalInstance.CancelAsync();
-
+        navMan.NavigateTo("/shops/");
     }
 
 }

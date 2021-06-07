@@ -14,7 +14,7 @@
     <div class="form-group">
         <label for="TypeOfRequest" style="font-weight:bold">Choose the tpe of Request</label><br />
         <select class="form-select form-select-sm" aria-label=".form-select-sm example" @bind="TypeOfRequest">
-            <option value="@typesOfRequest.NewShop">Change shop</option>
+            <option value="@typesOfRequest.NewShop">New Shop</option>
            
         </select>
     </div>
@@ -25,7 +25,7 @@
 
     <div class="form-group">
         <label for="Description" style="font-weight:bold">Description</label><br />
-        <input @bind="Description" type="text" class="form-control" id="last-name" placeholder="Enter the Description" />
+        <input @bind="Description" type="text" class="form-control" id="last-name" placeholder="Enter the Description and GoogleMaps link!" />
     </div>
 
     <button @onclick="SubmitForm" class="btn btn-primary">Submit</button>

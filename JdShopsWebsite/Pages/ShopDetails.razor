@@ -81,12 +81,12 @@ else
                             <td><img style="max-width: 500px; max-height:500px" src="@GetImg(img.ShopNumber, img.FileName)" /></td>
                             <td>@img.Description</td>
                             <AuthorizeView Roles="Admin, AdvancedUser">
-                                <td><button class="btn btn-danger" @onclick="@(()=>DeletePictureShop(img.Id))">Delete Picture</button></td>
+                                <td><button class="btn btn-danger" @onclick="@(() => DeleteShopPictureById(img.Id, img.ShopNumber))">Delete Picture</button></td>
                             </AuthorizeView>
                         </tr>
                     }
                     <AuthorizeView Roles="Admin, AdvancedUser">
-                        <tr><button class="btn btn-secondary" style="margin-top:10px" @onclick="NavigateToImageUpload(shop.ShopNumber)">Upload New Picture</button></tr>
+                        <tr><button class="btn btn-secondary" style="margin-top:10px" @onclick="@(() => NavigateToImageUpload(id))">Upload New Picture</button></tr>
                     </AuthorizeView>
                 </tbody>
             </table>
@@ -98,7 +98,7 @@ else
         <button class="btn btn-primary" style="margin: 5px" @onclick="@(() => AddRequest(id))">Request Change</button>
         <AuthorizeView Roles="Admin, AdvancedUser">
             <button class="btn btn-primary" style="margin: 5px" @onclick="@(() => EditShop
-                                                                            (shop.ShopNumber, shop.Facia, shop.DeliveryInfo,shop.MapCoordinatesLongitude, shop.MapCoordinatesLatitude, shop.Id, shop.PhoneNumber, shop.Town))">
+                                                                            (shop.ShopNumber, shop.Facia, shop.DeliveryInfo, shop.MapCoordinatesLongitude, shop.MapCoordinatesLatitude, shop.Id, shop.PhoneNumber, shop.Town))">
                 Edit Shop Details
             </button>
             <button class="btn btn-secondary" style="margin: 5px" @onclick="@(() => DeleteShop
@@ -184,18 +184,26 @@ else
     public List<AdditionalAddreessesDto> addAddresses { get; set; }
     public string imgurl { get; set; }
     public List<ImgShop> listOfShopImages { get; set; }
-    //@(()=>UploadPictureToShop(shop.ShopNumber))
+    public List<AddAddressImg> AddAddressImages { get; set; }
 
-    public async void DeletePictureShop(int id)
+
+    void DeleteShopPictureById(int id, string shopNumber)
     {
-        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/images/", id.ToString());
-        await Http.DeleteAsync(url);
+        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/images", id.ToString());
+        Http.DeleteAsync(url);
+        var url2 = Url.Combine("/shopDetails/", shopNumber);
+        navMan.NavigateTo(url2, true);
+    }
+
+    void UploadPictureToAddAddress()
+    {
 
     }
 
-    public void NavigateToImageUpload(float shopNumber)
+
+    public void NavigateToImageUpload(string id)
     {
-        var url = Url.Combine("/images", shopNumber.ToString);
+        var url = Url.Combine("/images", id);
         navMan.NavigateTo(url, true);
     }
 
@@ -203,18 +211,20 @@ else
     {
         var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/shops/", id.ToString());
         shops = await Http.GetFromJsonAsync<List<ShopDto>>(url);
+
         var url2 = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/shops/", id.ToString(), "/additional");
         addAddresses = await Http.GetFromJsonAsync<List<AdditionalAddreessesDto>>(url2);
         imgurl = id.ToString() + ".jpg";
 
         var url3 = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/images", id.ToString());
         listOfShopImages = await Http.GetFromJsonAsync<List<ImgShop>>(url3);
+
+        var url4 = Url.Combine();
     }
 
     public Object GetImg(string shopNumber, string filename)
     {
         var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/images", shopNumber, filename);
-        //var img = Http.GetStreamAsync(url);
         return url;
     }
 
@@ -289,14 +299,10 @@ else
 
     }
 
-    void UploadPictureToShop(float shopNumber)
-    {
-        var parameters = new ModalParameters();
-        parameters.Add(nameof(ImgShop.ShopNumber), shopNumber);
 
-        Modal.Show<UploadPictureShopComponent>("Upload Picture Shop", parameters);
-    }
+
 }
+
 
 
 
