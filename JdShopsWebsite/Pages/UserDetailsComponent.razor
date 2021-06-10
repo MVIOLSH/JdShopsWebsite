@@ -13,19 +13,16 @@
 @inject HttpClient Http
 @inject NavigationManager navMan
 
-
-
-<h3><center>ShopDetails</center></h3>
-
-
 @if (users == null)
 {
     <p><em>Loading...</em></p>
 }
 else
 {
-    <table class="table table-striped">
-        <thead class="thead-light">
+    @foreach (var user in users)
+    {
+        <table class="table table-striped">
+            <thead class="thead-light">
             <tr>
                 <th>ID</th>
                 <th>Name</th>
@@ -33,25 +30,28 @@ else
                 <th>Email</th>
                 <th>Active Account</th>
                 <th>Role</th>
-                <th>More Details</th>
+                <th>Role ID</th>
+                <th>Edit User Details</th>
             </tr>
-        </thead>
-        <tbody>
-            @foreach (var user in users)
-            {
-                <tr>
-                    <td>@user.Id</td>
-                    <td>@user.Fname</td>
-                    <td>@user.Lname</td>
-                    <td>@user.Email</td>
-                    <td>@user.IsValidated</td>
-                    <td>@user.Role</td>
-                    <td>@user.RoleId</td>
-                    <td><button class="btn btn-primary" style="margin: 5px" @onclick="@(()=>EditUser(@user.Fname, @user.Lname, @user.Role, @user.Email, @user.RoleId, @user.Id))">Change User</button></td>
-                </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+
+            <tr>
+                <td>@user.Id</td>
+                <td>@user.Fname</td>
+                <td>@user.Lname</td>
+                <td>@user.Email</td>
+                <td>@user.IsValidated</td>
+                <td>@user.Role</td>
+                <td>@user.RoleId</td>
+                <td><button class="btn btn-primary" style="margin: 5px" @onclick="@(() => EditUser(@user.Fname, @user.Lname, @user.Role, @user.Email, @user.RoleId, @user.Id, @user.IsValidated))">Edit User</button></td>
+            </tr>
+
+            </tbody>
+        </table>
+        <button class="btn btn-success" @onclick="(() => ResetPass(user.Id.ToString()))">Reset Password</button>
+        <button class="btn btn-danger" @onclick="(() => DeleteUser(user.Email, user.Id))">Delete User</button>
+    }
 }
 
 
@@ -78,80 +78,39 @@ else
 
     [CascadingParameter] public IModalService Modal { get; set; }
 
-    async void EditUser(string fName, string lName, string Role, string email, int roleid, int id)
+    async void EditUser(string fName, string lName, string Role, string email, int roleid, int id, bool isValidated)
     {
         var parameters = new ModalParameters();
-        parameters.Add(nameof(Shared.Users.Id),id );
+        parameters.Add(nameof(Shared.Users.Id), id);
         parameters.Add(nameof(Shared.Users.Fname), fName);
         parameters.Add(nameof(Shared.Users.Lname), lName);
         parameters.Add(nameof(Shared.Users.Role), Role);
         parameters.Add(nameof(Shared.Users.RoleId), roleid);
         parameters.Add(nameof(Shared.Users.Email), email);
+        parameters.Add(nameof(Shared.Users.IsValidated), isValidated);
 
-        var modal = Modal.Show<EditAddAddressComponent>("Edit Additional Address", parameters);
+        var modal = Modal.Show<EditUserComponent>("Edit User Details", parameters);
 
     }
 
-    void DeleteAddAddress(string shopNumber, string description, string deliveryInfo, string longitude, string latitude, int id)
+    void DeleteUser(string Email, int id)
     {
         var parameters = new ModalParameters();
-        parameters.Add(nameof(AdditionalAddreessesDto.ShopNumber), shopNumber);
-        parameters.Add(nameof(AdditionalAddreessesDto.Description), description);
-        parameters.Add(nameof(AdditionalAddreessesDto.DeliveryInfo), deliveryInfo);
-        parameters.Add(nameof(AdditionalAddreessesDto.MapCoordinatesLongitude), longitude);
-        parameters.Add(nameof(AdditionalAddreessesDto.MapCoordinatesLatitude), latitude);
-        parameters.Add(nameof(AdditionalAddreessesDto.Id), id);
+        parameters.Add(nameof(User.Id), id);
+        parameters.Add(nameof(User.Email), Email);
+       
 
-        Modal.Show<DeleteAddAddressComponent>("Delete Address", parameters);
+        Modal.Show<DeleteUserComponent>("Delete User", parameters);
 
     }
 
     void ResetPass(string id)
     {
         var parameters = new ModalParameters();
-        parameters.Add(nameof(AdditionalAddreessesDto.ShopNumber), float.Parse(id));
+        parameters.Add(nameof(User.Id), int.Parse(id));
 
-        Modal.Show<AddAddAddressComponent>("Add Address", parameters);
+        Modal.Show<ResetUserPaswordComponent>("Reset Password", parameters);
     }
-
-    void AddRequest(string id)
-    {
-        var parameters = new ModalParameters();
-        parameters.Add(nameof(TicketDto.ShopNumber), id);
-
-        Modal.Show<AddRequestComponent>("Add Request", parameters);
-    }
-
-    void EditShop(float shopNumber, string facia, string deliveryInfo, string longitude, string latitude, int id, string phoneNumber, string town)
-    {
-        var parameters = new ModalParameters();
-        parameters.Add(nameof(ShopDto.ShopNumber), shopNumber);
-        parameters.Add(nameof(ShopDto.Facia), facia);
-        parameters.Add(nameof(ShopDto.DeliveryInfo), deliveryInfo);
-        parameters.Add(nameof(ShopDto.MapCoordinatesLongitude), longitude);
-        parameters.Add(nameof(ShopDto.MapCoordinatesLatitude), latitude);
-        parameters.Add(nameof(ShopDto.Id), id);
-        parameters.Add(nameof(ShopDto.PhoneNumber), phoneNumber);
-        parameters.Add(nameof(ShopDto.Town), town);
-
-        var window = Modal.Show<EditShopComponent>("Edit Address", parameters);
-
-    }
-    void DeleteShop(float shopNumber)
-    {
-        var parameters = new ModalParameters();
-        parameters.Add(nameof(ShopDto.ShopNumber), shopNumber);
-
-        Modal.Show<DeleteShopComponent>("Delete Shop", parameters);
-
-    }
-
-
-
-
-
-
-
 
 }
 

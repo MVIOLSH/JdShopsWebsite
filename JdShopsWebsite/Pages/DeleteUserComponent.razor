@@ -1,0 +1,44 @@
+﻿@using Flurl
+@inject HttpClient Http
+@inject NavigationManager navMan
+
+<div class="simple-form">
+    <div class="form-group">
+        <label style="font-weight:bold">Are you sure you want to Delete this User?</label><br />
+        <label>Current Value: @Email </label>
+    </div>
+    <button @onclick="SubmitForm" class="btn btn-primary">YES</button>
+    <button @onclick="Cancel" class="btn btn-secondary">NO</button>
+</div>
+
+@code {
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+
+    [Parameter]
+    public int id { get; set; }
+    [Parameter]
+    public string Email { get; set; }
+
+
+
+    async void SubmitForm()
+    {
+        ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+
+        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/account/", id.ToString());
+        Http.DeleteAsync(url);
+        var url2 = Url.Combine("/users");
+        await Task.Delay(500);
+        navMan.NavigateTo(url2, true);
+
+
+
+    }
+
+    void Cancel()
+    {
+        ModalInstance.CancelAsync();
+
+    }
+
+}

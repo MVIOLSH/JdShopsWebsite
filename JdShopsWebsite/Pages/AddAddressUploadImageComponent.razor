@@ -1,4 +1,5 @@
-﻿@page "/images/{shopNumber}"
+﻿@page "/AddAddress/imgupload/{shopNumber}/{addAddressId}"
+
 @using Flurl
 @using System.IO
 @using Microsoft.AspNetCore.Http;
@@ -18,10 +19,10 @@
             <li>File Name: @filename </li>
             <li>Size: @filesize </li>
             <li>Type: @filetype </li>
-        </ul>      
+        </ul>
         <br />
         <label style="font-weight:bold">Please provide the description: </label>
-        <input type="text" @bind="Description" class="form-control" id="img-description" placeholder="Enter the description" />
+        <textarea type="text" @bind="Description" class="form-control" id="img-description" placeholder="Enter the description" />
     </div>
     <button @onclick="SubmitForm" class="btn btn-primary">Save Image</button>
     <button @onclick="Cancel" class="btn btn-secondary">Cancel</button>
@@ -33,6 +34,8 @@
 
     [Parameter]
     public string shopNumber { get; set; }
+    [Parameter]
+    public int addAddressId { get; set; }
 
     ElementReference inputReference;
     string filename = string.Empty;
@@ -51,11 +54,11 @@
         {
             return;
         }
-   
+
         var fileInfo = await file.ReadFileInfoAsync();
         filename = fileInfo.Name;
         filesize = $"{fileInfo.Size}b";
-        filetype = fileInfo.Type;       
+        filetype = fileInfo.Type;
 
         using (var ms = await file.CreateMemoryStreamAsync((int)fileInfo.Size))
         {
@@ -63,7 +66,7 @@
         }
 
     }
- 
+
     async Task SubmitForm()
     {
 
@@ -71,7 +74,7 @@
         content.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("form-data");
         content.Add(new StreamContent(filestream, (int)filestream.Length), "file", filename);
         content.Add(new StringContent(Description), "description");
-        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/images", shopNumber.ToString());
+        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/images/additional", shopNumber.ToString());
         var response = await Http.PostAsync(url, content);
 
         var url2 = Url.Combine("/shopDetails", shopNumber.ToString());

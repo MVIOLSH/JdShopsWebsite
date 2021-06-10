@@ -1,0 +1,136 @@
+﻿@using Flurl
+@using System.Net
+@using System.Text
+@using Bunit.Extensions
+@using Newtonsoft.Json
+@inject HttpClient Http
+@inject NavigationManager navMan
+
+
+
+<div class="simple-form">
+    <div class="form-group">
+        <label for="Email" style="font-weight:bold">Email</label><br />
+        <label>Current value:  @email </label>
+    </div>
+
+    <div class="form-group">
+        <label for="fName" style="font-weight:bold">First Name</label><br />
+        <label>Current value: @fName </label>
+        <input @bind="fNameNew" type="text" class="form-control" id="first-Name" placeholder="Enter changed First name" />
+    </div>
+    <div class="form-group">
+        <label for="lName" style="font-weight:bold">Last Name</label><br />
+        <label>Current value: @lName </label>
+        <input @bind="lNameNew" type="text" class="form-control" id="last-name" placeholder="Enter changed Last Name" />
+    </div>
+    <div class="form-group">
+        <label for="Roledef" style="font-weight:bold">Choose the user Role</label><br />
+        <label for="Roledef" >Current Role: @Role</label><br />
+        <select class="form-select form-select-sm" aria-label=".form-select-sm example" @bind="RoleIdNew">
+            <option value="1">Dummy User (Temporary, )</option>
+            <option value="2">Verified User</option>
+            <option value="3">Advanced User</option>
+            <option value="4">Admin</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="isValidatedNew" style="font-weight:bold">Account is active?</label><br />
+        <select class="form-select form-select-sm" aria-label=".form-select-sm example" @bind="isValidatedNew">
+            <option value=""></option>
+            <option value="yes">True</option>
+            <option value="no">False</option>
+        </select>
+    </div>
+
+
+    <button @onclick="save" class="btn btn-primary">Submit</button>
+    <button @onclick="Cancel" class="btn btn-secondary">Cancel</button>
+</div>
+
+
+@code {
+
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+
+    [Parameter]
+    public int id { get; set; }
+    [Parameter]
+    public string fName { get; set; }
+    [Parameter]
+    public string lName { get; set; }
+    [Parameter]
+    public string Role { get; set; }
+    [Parameter]
+    public int RoleId { get; set; }
+    [Parameter]
+    public string email { get; set; }
+    [Parameter]
+    public bool isValidated { get; set; }
+
+    public int RoleIdNew { get; set; }
+
+    public string isValidatedNew { get; set; } 
+
+    public string fNameNew { get; set; }
+   
+    public string lNameNew { get; set; }
+
+
+    public HttpResponseMessage response { get; set; }
+
+
+
+    async void save()
+    {
+
+        if (!fNameNew.IsNullOrEmpty())
+        {
+            fName = fNameNew;
+        }
+        if (!lNameNew.IsNullOrEmpty())
+        {
+            lName = lNameNew;
+        }
+        if (RoleIdNew !=0)
+        {
+            RoleId = RoleIdNew;
+        }
+        if (isValidatedNew == "yes")
+        {
+            isValidated = true;
+        }
+        if (isValidatedNew == "no")
+        {
+            isValidated = false;
+        }
+
+        var changedUser = new User()
+        {
+            Id = id,
+            Fname = fName,
+            Lname = lName,
+            RoleId = RoleId,
+            IsValidated = isValidated
+        };
+
+        var changedUserJson = JsonConvert.SerializeObject(changedUser);
+        var content = new StringContent(changedUserJson, Encoding.UTF8, "application/json");
+
+
+        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/account/update", id.ToString());
+        Http.PatchAsync(url, content);
+        var url2 = Url.Combine("/userDetails", id.ToString());
+        ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+        await Task.Delay(500);
+        navMan.NavigateTo(url2, true);
+    }
+
+    void Cancel()
+    {
+        ModalInstance.CancelAsync();
+
+    }
+
+
+}

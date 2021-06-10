@@ -1,5 +1,8 @@
 ﻿@page "/tickets"
+@using Flurl
 @inject HttpClient Http
+@inject NavigationManager navMan
+
 
 <h1>Tickets System</h1>
 
@@ -29,7 +32,7 @@ else
                 <td>@ticket.ShopNumber</td>
                 <td>@ticket.Status</td>
                 <td>@ticket.Title</td>
-                <td><button class="btn btn-primary">More Details</button></td>
+                <td><button class="btn btn-primary" @onclick="(()=>NavigateToTicketDetails(ticket.Id))">More Details</button></td>
             </tr>
         }
     </tbody>
@@ -42,6 +45,13 @@ else
     protected override async Task OnInitializedAsync()
     {
         tickets = await Http.GetFromJsonAsync<List<TicketDto>>("https://jdshops-api-app.azurewebsites.net/api/tickets");
+    }
+    private void NavigateToTicketDetails(int id)
+    {
+
+        var url2 = Url.Combine($"/ticketDetails/", id.ToString());
+        navMan.NavigateTo(url2, true);
+
     }
 
     

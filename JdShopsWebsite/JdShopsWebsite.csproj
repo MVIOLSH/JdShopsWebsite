@@ -15,6 +15,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.6" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="5.0.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.6">
@@ -30,11 +31,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Pages\AdditionalAddres\" />
-    <Folder Include="Pages\LoginAndRegister\" />
-    <Folder Include="Pages\Shops\" />
-    <Folder Include="Pages\Tickets\" />
-    <Folder Include="Pages\Users\" />
     <Folder Include="wwwroot\css\img\" />
   </ItemGroup>
 

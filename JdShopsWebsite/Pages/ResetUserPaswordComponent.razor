@@ -1,5 +1,59 @@
-﻿<h3>ResetUserPaswordComponent</h3>
+﻿@using Flurl
+@using System.Net
+@using System.Text
+@using Bunit.Extensions
+@using Flurl.Util
+@using Microsoft.AspNetCore.JsonPatch
+@using Newtonsoft.Json
+@inject HttpClient Http
+@inject NavigationManager navMan
+
+
+
+<div class="simple-form">
+     <div class="form-group">
+        <label for="password" style="font-weight:bold">New Password</label><br />
+        <input @bind="Password" type="text" class="form-control" id="password" placeholder="Enter the new Password" />
+    </div>
+
+
+    <button @onclick="SubmitForm" class="btn btn-primary">Submit</button>
+    <button @onclick="Cancel" class="btn btn-secondary">Cancel</button>
+</div>
+
 
 @code {
+
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+
+        
+    [Parameter]
+    public int Id { get; set; }
+    public string Password { get; set; }
+
+
+    async void SubmitForm()
+    {
+        ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+
+        var password = new User() {PasswordHash = Password};
+        var jsonRequest = JsonConvert.SerializeObject(password);
+        var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+
+
+        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/account/resetPass/", Id.ToString());
+        Http.PatchAsync(url,content);
+        var url2 = Url.Combine("/users");
+        await Task.Delay(500);
+        navMan.NavigateTo(url2, true);
+
+    }
+
+    void Cancel()
+    {
+        ModalInstance.CancelAsync();
+
+    }
+
 
 }

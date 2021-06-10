@@ -1,6 +1,7 @@
 ﻿@page "/users"
 @using Flurl
 @inject HttpClient Http
+@inject NavigationManager navMan
 
 <h3>Users</h3>
 
@@ -13,31 +14,32 @@ else
 {
     <table class="table table-striped">
         <thead class="thead-light">
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Surname</th>
-            <th>Email</th>
-            <th>Active Account</th>
-            <th>Role</th>
-            <th>More Details</th>
-        </tr>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Surname</th>
+                <th>Email</th>
+                <th>Active Account</th>
+                <th>Role</th>
+                <th>More Details</th>
+            </tr>
         </thead>
         <tbody>
-        @foreach (var user in users)
-        {
-            <tr>
-                <td>@user.Id</td>
-                <td>@user.Fname</td>
-                <td>@user.Lname</td>
-                <td>@user.Email</td>
-                <td>@user.IsValidated</td>
-                <td>@user.Role</td>
-                <td><button class="btn btn-primary">More Details</button></td>
-            </tr>
-        }
+            @foreach (var user in users)
+            {
+                <tr>
+                    <td>@user.Id</td>
+                    <td>@user.Fname</td>
+                    <td>@user.Lname</td>
+                    <td>@user.Email</td>
+                    <td>@user.IsValidated</td>
+                    <td>@user.Role</td>
+                    <td><button class="btn btn-primary" @onclick="(()=>NavigateToUserDetails(user.Id))">More Details</button></td>
+                </tr>
+            }
         </tbody>
     </table>
+    
 }
 
 @code {
@@ -48,11 +50,11 @@ else
         users = await Http.GetFromJsonAsync<List<Shared.Users>>("https://jdshops-api-app.azurewebsites.net/api/account/users");
     }
 
-    private void NavigateToShopDetails(float id)
+    private void NavigateToUserDetails(int id)
     {
 
-        //var url2 = Url.Combine($"/shopDetails/", id.ToString());
-        //navigationManager.NavigateTo(url2, true);
+        var url2 = Url.Combine($"/userDetails/", id.ToString());
+        navMan.NavigateTo(url2, true);
 
     }
 

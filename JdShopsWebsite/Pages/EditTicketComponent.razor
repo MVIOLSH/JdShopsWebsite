@@ -1,0 +1,150 @@
+﻿@page  "/ticketDetails/edit/{id}"
+@using Flurl
+@using System.Net
+@using System.Text
+@using Bunit.Extensions
+@using Newtonsoft.Json
+@inject HttpClient Http
+@inject NavigationManager navMan
+
+@if (tickets == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    @foreach (var ticket in tickets)
+    {
+<div class="simple-form">
+    <div class="form-group">
+        <label for="title" style="font-weight: bold">Title</label><br />
+        <label>Current value: @ticket.Title </label>
+        <input @bind="title" type="text" class="form-control" id="first-name" placeholder="Enter the title" />
+    </div>
+    <div class="form-group">
+        <label for="shopNumber" style="font-weight: bold">Shop Number</label><br />
+        <label>Current value: @ticket.ShopNumber </label>
+        <input @bind="shopNumber" type="text" class="form-control" id="first-name" placeholder="Enter the Shop Number" />
+    </div>
+
+    <div class="form-group">
+        <label for="descripton" style="font-weight: bold">Description</label><br />
+        <label>Current value: @ticket.Description </label>
+        <textarea @bind="description" type="text" class="form-control" id="first-Name" placeholder="Enter the decription" />
+    </div>
+    <div class="form-group">
+        <label for="TypeOfRequest" style="font-weight: bold">Type of the Request</label><br />
+        <label for="Roledef">Current Type: @ticket.TypeOfRequest</label><br />
+        <select class="form-select form-select-sm" aria-label=".form-select-sm example" @bind="@ticket.TypeOfRequest">
+            <option value="@typesOfRequest.NewShop">New shop request</option>
+            <option value="@typesOfRequest.ChangeInShopDetails">Change of shop details</option>
+            <option value="@typesOfRequest.ChangeInAdditionalAddress">Change in Additional Address</option>
+            <option value="@typesOfRequest.Delete">Delete</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="isValidatedNew" style="font-weight: bold">Status of the Ticket</label><br />
+        <select class="form-select form-select-sm" aria-label=".form-select-sm example" @bind="@ticket.Status">
+            <option value="@statusSelector.Open.ToString()"> New, no one dealing with it</option>
+            <option value="@statusSelector.InProgress.ToString()">Someone is dealing with the ticket</option>
+            <option value="@statusSelector.Closed.ToString()">Closed</option>
+        </select>
+    </div>
+
+
+    <button @onclick="save" class="btn btn-primary">Submit</button>
+    <button @onclick="Cancel" class="btn btn-secondary">Cancel</button>
+</div>
+    }
+}
+
+    @code {
+
+
+
+        [Parameter]
+        public string id { get; set; }
+
+
+     public string status { get; set; }
+
+    public string title { get; set; }
+
+    public string description { get; set; }
+        public string TypeOfRequest { get; set; }
+        public string shopNumber { get; set; }
+
+    public enum typesOfRequest { ChangeInShopDetails, ChangeInAdditionalAddress, Delete, NewShop }
+
+    public enum statusSelector
+    {
+        Open,
+        InProgress,
+        Closed
+    }
+
+    public List<TicketDto> tickets { get; set; }
+
+    public HttpResponseMessage response { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/tickets", id.ToString());
+        tickets = await Http.GetFromJsonAsync<List<TicketDto>>(url);
+    }
+
+    async void save()
+    {
+        foreach (var ticket in tickets)
+        {
+            if (title.IsNullOrEmpty())
+            {
+                title = @ticket.Title;
+            }
+            if (status.IsNullOrEmpty())
+            {
+                status = ticket.Status;
+            }
+            if (TypeOfRequest.IsNullOrEmpty())
+            {
+                TypeOfRequest = ticket.TypeOfRequest;
+            }
+            if (shopNumber.IsNullOrEmpty())
+            {
+                shopNumber = ticket.ShopNumber.ToString();
+            }
+            if (description.IsNullOrEmpty())
+            {
+                description = ticket.Description;
+            }
+
+        }
+        
+        var changedTicket = new TicketDto()
+        {
+            Title = title,
+            Status = status.ToString(),
+            TypeOfRequest = TypeOfRequest.ToString(),
+            Description = description,
+            ShopNumber = shopNumber
+        };
+
+        var changedTicketJson = JsonConvert.SerializeObject(changedTicket);
+        var content = new StringContent(changedTicketJson, Encoding.UTF8, "application/json");
+
+
+        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/tickets", id.ToString());
+        Http.PatchAsync(url, content);
+        var url2 = Url.Combine("/ticketDetails", id.ToString());
+        await Task.Delay(500);
+        navMan.NavigateTo(url2, true);
+    }
+
+    void Cancel()
+    {
+        navMan.NavigateTo($"/ticketDetails/{id}");
+
+    }
+
+
+    }

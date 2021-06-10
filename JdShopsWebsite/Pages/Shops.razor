@@ -26,7 +26,7 @@ else
            @bind="Filter"
            @bind:event="oninput">
     <br />
-    <AuthorizeView Roles="Admin, AdvancedUser"><button class="btn btn-primary" @onclick="()=>AddNewShop() "> Add New Shop </button></AuthorizeView>  <button class="btn btn-primary" @onclick="()=>RequestToAddNewShop() "> Add ticket to Add New Shop </button>
+    <AuthorizeView Roles="Admin, AdvancedUser"><button class="btn btn-primary" @onclick="()=>AddNewShop() "> Add New Shop </button></AuthorizeView>  <AuthorizeView Roles="VerifiedUser, AdvancedUser,Admin"><button class="btn btn-primary" @onclick="()=>RequestToAddNewShop() "> Add ticket to Add New Shop </button></AuthorizeView>
 </div>
     <table class="table table-striped">
         <thead class="thead-light">

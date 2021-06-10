@@ -1,0 +1,97 @@
+﻿@page "/ticketDetails/{id}"
+@using System.Net
+@using Bunit.Extensions
+@using Flurl
+@using Blazored
+@using Blazored.Modal
+@using Blazored.Modal.Services
+@using System.IO
+@using System.Security.Permissions
+@using Microsoft.AspNetCore.Http
+@using Microsoft.EntityFrameworkCore.Migrations
+
+@inject HttpClient Http
+@inject NavigationManager navMan
+
+@if (tickets == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    @foreach (var ticket in tickets)
+    {
+<table class="table table-striped">
+    <thead class="thead-light">
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Shop Number</th>
+            <th>Status</th>
+            <th>Type of Request</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        <tr>
+            <td>@ticket.Id</td>
+            <td>@ticket.Title</td>
+            <td>@ticket.ShopNumber</td>
+            <td>@ticket.Status</td>
+            <td>@ticket.TypeOfRequest</td>
+        </tr>
+    </tbody>
+    <thead class="thead-light">
+    <th>Description</th>
+    <th>User Name</th>
+    <th>User Surname</th>
+    <th>Created By user ID </th>
+    <th>Edit</th>
+    </thead>
+    <tbody>
+    <td>@ticket.Description</td>
+    <td>@ticket.UserFname</td>
+    <td> @ticket.UserLname</td>
+    <td>@ticket.UserId</td>
+    <td><button class="btn btn-primary" style="margin: 5px" @onclick="@(()=>EditTicket())">Edit Ticket</button></td>
+    </tbody>
+</table>
+    }
+}
+
+
+@code
+{
+    [Parameter]
+    public string id { get; set; }
+
+    public List<TicketDto> tickets { get; set; }
+
+    protected override void OnParametersSet()
+    {
+
+        var test = id;
+
+    }
+   
+
+    protected override async Task OnInitializedAsync()
+    {
+        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/tickets/", id.ToString());
+        tickets = await Http.GetFromJsonAsync<List<TicketDto>>(url);
+    }
+
+
+    
+
+    void EditTicket()
+    {
+        var url = Url.Combine("/ticketDetails/edit", id);
+        navMan.NavigateTo(url);
+        
+    }
+  
+
+}
+
+
