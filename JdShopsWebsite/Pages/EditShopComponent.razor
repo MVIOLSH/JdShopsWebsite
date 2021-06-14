@@ -15,7 +15,7 @@
     <div class="form-group">
         <label for="Facia" style="font-weight:bold">Choose the Shop Brand</label><br />
         <label for="Facia" style="font-weight:bold">Current Value: @Facia</label><br />
-        <select class="form-select form-select-sm" aria-label=".form-select-sm example" @bind="Facia">
+        <select class="form-select form-select-sm" aria-label=".form-select-sm example" @bind="FaciaType">
             <option value="@faciaTypeEnum.JD">JD Sports</option>
             <option value="@faciaTypeEnum.Blacks">Blacks</option>
             <option value="@faciaTypeEnum.Size">Size?</option>
@@ -77,7 +77,7 @@
     public string MapCoordinatesLatitude { get; set; }
     [Parameter]
     public string Facia { get; set; }
-    public faciaTypeEnum FaciaType { get; set; } = faciaTypeEnum.JD;
+    public faciaTypeEnum FaciaType { get; set; } 
     public enum faciaTypeEnum { JD, Tessuti, Millets,Blacks, Size, Scotts, Ultimate }
 
     async void SubmitForm()
@@ -98,7 +98,7 @@
         };
         var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/shops/", ShopNumber.ToString());
         Http.PutAsJsonAsync(url, newShop);
-        var url2 = Url.Combine("/shops/");
+        var url2 = Url.Combine("/shopDetails/", ShopNumber.ToString());
         await Task.Delay(500);
         navMan.NavigateTo(url2, true);
 

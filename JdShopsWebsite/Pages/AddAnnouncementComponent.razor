@@ -1,0 +1,91 @@
+﻿@page "/announcement/add"
+@using System.Net
+@using System.Security.Authentication.ExtendedProtection
+@using System.Text
+@using Bunit.Extensions
+@using Flurl
+@using Microsoft.AspNetCore.Authentication.Cookies
+@using Microsoft.AspNetCore.Components
+@using Microsoft.Extensions.Options
+@using Newtonsoft.Json
+@inject HttpClient Http
+@inject NavigationManager navMan
+
+<h3>AddAnnouncementComponent</h3>
+
+<div class="form-group">
+    <label for="title" style="font-weight:bold">Title</label><br />
+
+    <input @bind="title" type="text" class="form-control" id="shop-number" placeholder="Enter new Title" />
+</div>
+
+<div class="form-group">
+    <label for="content" style="font-weight:bold">Content</label><br />
+
+    <textarea @bind="Content" type="text" class="form-control" id="description" placeholder="Enter New Content" />
+</div>
+<div class="form-group">
+    <label for="Type" style="font-weight:bold">Choose the type of the announcement</label><br />
+    <select class="form-select form-select-sm" aria-label=".form-select-sm example" @bind="@Type">
+        <option value="Office Announcement">Office Announcement</option>
+        <option value="Coleague Announcement">Colleague Announcement</option>
+        <option value="HR Announcement">HR Announcement</option>
+        <option value="Miscelanous">Miscellaneous</option>
+    </select>
+</div>
+<div class="form-group">
+    <label for="isPublished" style="font-weight:bold">Published?</label><br />
+    <select class="form-select form-select-sm" aria-label=".form-select-sm example" @bind="isPublished">
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+    </select>
+</div>
+<br />
+<button @onclick="@(()=>Save())" class="btn btn-success">Save new Post</button>
+<button @onclick="@(()=>GoBack())" class="btn btn-success">Go back</button>
+
+
+
+@code
+{
+
+
+    public string title { get; set; }
+    public string Content { get; set; }
+    public string isPublished { get; set; } = "yes";
+    public string Type { get; set; }
+    public bool isDeleted { get; set; } = false;
+    public bool isPublishedValue { get; set; }
+
+    void Save()
+    {
+        if (isPublished != "No")
+        {
+            isPublishedValue = true;
+        }
+
+        var newPost = new AnnouncementDto()
+        {
+            Title = title,
+            Content = Content,
+            IsPublished = isPublishedValue,
+            Type = Type,
+            IsDeleted = isDeleted,
+            DateCreated = DateTime.Now
+
+        };
+
+
+        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/announcements");
+        var response = Http.PostAsJsonAsync(url, newPost);
+
+
+    }
+
+    void GoBack()
+    {
+        var url2 = Url.Combine("/");
+        navMan.NavigateTo(url2, true);
+    }
+
+}

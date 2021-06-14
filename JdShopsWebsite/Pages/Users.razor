@@ -5,6 +5,14 @@
 
 <h3>Users</h3>
 
+<br />
+<input class="form-control" type="text" placeholder="Search...."
+       @bind="Filter">
+<br />
+<button class="btn btn-primary" @onclick="(()=>Seearch(Filter))">Hit to search</button>
+<br />
+<br />
+
 
 @if (users == null)
 {
@@ -39,10 +47,11 @@ else
             }
         </tbody>
     </table>
-    
+
 }
 
 @code {
+    public string Filter { get; set; }
     private List<Shared.Users> users { get; set; }
 
     protected override async Task OnInitializedAsync()
@@ -56,6 +65,11 @@ else
         var url2 = Url.Combine($"/userDetails/", id.ToString());
         navMan.NavigateTo(url2, true);
 
+    }
+    private async Task Seearch(string search)
+    {
+        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/account/users?searchPhrase="+search);
+        users = await Http.GetFromJsonAsync<List<Shared.Users>>(url);
     }
 
 

@@ -1,7 +1,10 @@
 ﻿@using System.Net
+@using Flurl
 @inject HttpClient Http
+@inject NavigationManager navMan
 
 <div style="font-size: 2.5rem; font-weight: bold; font-style: italic;"><center>Dashboard</center></div>
+<AuthorizeView Roles="Admin, VerifiedUser"><button @onclick="@(()=>CreateNewPost())" class="btn btn-outline-success">Add new post</button></AuthorizeView>
 @if (announcements == null)
 {
     <p><em>Loading...</em></p>
@@ -10,19 +13,26 @@ else
 {
     @foreach (var post in announcements)
     {
-        <div class="dashboardPost">
-            <table>
-                <thead class="dashboardPostTitle">@post.Title</thead>
-                <tbody>
-                <tr>Posted by: @post.Type</tr>
-                <tr>@post.Content</tr>
-                </tbody>
-                <tfoot>
-                <tr>@post.DateCreated</tr>
-                </tfoot>
-            </table>
-        </div>
+        if (post.IsPublished == true)
+        {
+            <div class="dashboardPost">
+                <table>
+                    <thead class="dashboardPostTitle">@post.Title</thead>
+                    <tbody>
+                    <tr>Posted by: @post.Type</tr>
+                    <tr>@post.Content</tr>
+                    </tbody>
+                    <tfoot>
+                    <tr>@post.DateCreated</tr>
+                    </tfoot>
+                </table>
+
+                <br/>
+                <AuthorizeView Roles="Admin, VerifiedUser"><button @onclick="@(() => GoToId(post.Id))" class="btn btn-outline-danger">Edit post</button></AuthorizeView>
+            </div>
+        } 
         <li class="dropdown-divider"></li>
+
     }
 
 }
@@ -33,7 +43,22 @@ private List<AnnouncementDto> announcements { get; set; }
     {
         announcements = await Http.GetFromJsonAsync<List<AnnouncementDto>>("https://jdshops-api-app.azurewebsites.net/api/announcements");
     }
- 
+
+        public async void GoToId(int id)
+        {
+            var url = Url.Combine("/Announcement/", id.ToString());
+            navMan.NavigateTo(url);
+         
+        }
+        public async void CreateNewPost()
+        {
+            var url = Url.Combine("/Announcement/add");
+            navMan.NavigateTo(url);
+      
+        }
+
+
+
 
 
 

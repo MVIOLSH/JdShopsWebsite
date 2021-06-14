@@ -5,6 +5,13 @@
 
 
 <h1>Tickets System</h1>
+<br />
+<input class="form-control" type="text" placeholder="Search...."
+       @bind="Filter">
+<br />
+<button class="btn btn-primary" @onclick="(()=>Seearch(Filter))">Hit to search</button>
+<br/>
+<br/>
 
 
 
@@ -14,37 +21,39 @@
 }
 else
 {
-<table class="table table-striped">
-    <thead class="thead-light">
-        <tr>
-            <th>ID</th>
-            <th>Shop Number</th>
-            <th>Status</th>
-            <th>Title</th>
-            <th>More Details</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var ticket in tickets)
-        {
+    <table class="table table-striped">
+        <thead class="thead-light">
             <tr>
-                <td>@ticket.Id</td>
-                <td>@ticket.ShopNumber</td>
-                <td>@ticket.Status</td>
-                <td>@ticket.Title</td>
-                <td><button class="btn btn-primary" @onclick="(()=>NavigateToTicketDetails(ticket.Id))">More Details</button></td>
+                <th>ID</th>
+                <th>Shop Number</th>
+                <th>Status</th>
+                <th>Title</th>
+                <th>More Details</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var ticket in tickets)
+            {
+                <tr>
+                    <td>@ticket.Id</td>
+                    <td>@ticket.ShopNumber</td>
+                    <td>@ticket.Status</td>
+                    <td>@ticket.Title</td>
+                    <td><button class="btn btn-primary" @onclick="(()=>NavigateToTicketDetails(ticket.Id))">More Details</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }
 
 @code {
+    public string Filter { get; set; }
     private List<TicketDto> tickets { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        tickets = await Http.GetFromJsonAsync<List<TicketDto>>("https://jdshops-api-app.azurewebsites.net/api/tickets");
+        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/tickets?searchPhrase=" );
+        tickets = await Http.GetFromJsonAsync<List<TicketDto>>(url);
     }
     private void NavigateToTicketDetails(int id)
     {
@@ -54,6 +63,12 @@ else
 
     }
 
-    
-    
+    private async Task Seearch(string search)
+    {
+        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/tickets?searchPhrase="+search);
+        tickets = await Http.GetFromJsonAsync<List<TicketDto>>(url);
+    }
+
+
+
 }
