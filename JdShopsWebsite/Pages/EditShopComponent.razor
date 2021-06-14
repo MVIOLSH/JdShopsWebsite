@@ -15,15 +15,16 @@
     <div class="form-group">
         <label for="Facia" style="font-weight:bold">Choose the Shop Brand</label><br />
         <label for="Facia" style="font-weight:bold">Current Value: @Facia</label><br />
-        <select class="form-select form-select-sm" aria-label=".form-select-sm example" @bind="FaciaType">
-            <option value="@faciaTypeEnum.JD">JD Sports</option>
-            <option value="@faciaTypeEnum.Blacks">Blacks</option>
-            <option value="@faciaTypeEnum.Size">Size?</option>
-            <option value="@faciaTypeEnum.Millets">Millets</option>
-            <option value="@faciaTypeEnum.Scotts">Scotts</option>
-            <option value="@faciaTypeEnum.Tessuti">Tessuti</option>
-            <option value="@faciaTypeEnum.Ultimate">Ultimate Outdoors</option>
-        </select>
+                                                                                 <select class="form-select form-select-sm" aria-label=".form-select-sm example" @bind="FaciaChange">
+                                                                                     <option value=""> </option>
+                                                                                     <option value="@faciaTypeEnum.JD">JD Sports</option>
+                                                                                     <option value="@faciaTypeEnum.Blacks">Blacks</option>
+                                                                                     <option value="@faciaTypeEnum.Size">Size?</option>
+                                                                                     <option value="@faciaTypeEnum.Millets">Millets</option>
+                                                                                     <option value="@faciaTypeEnum.Scotts">Scotts</option>
+                                                                                     <option value="@faciaTypeEnum.Tessuti">Tessuti</option>
+                                                                                     <option value="@faciaTypeEnum.Ultimate">Ultimate Outdoors</option>
+                                                                                 </select>
     </div>
 
     <div class="form-group">
@@ -77,6 +78,9 @@
     public string MapCoordinatesLatitude { get; set; }
     [Parameter]
     public string Facia { get; set; }
+
+    public string FaciaChange { get; set; }
+
     public faciaTypeEnum FaciaType { get; set; } 
     public enum faciaTypeEnum { JD, Tessuti, Millets,Blacks, Size, Scotts, Ultimate }
 
@@ -84,13 +88,21 @@
     {
         ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
 
+        if ( FaciaChange.IsNullOrEmpty())
+        {
+            FaciaChange = Facia;
+        }
+        else
+        {
+            FaciaChange.ToString();
+        }
         var newShop = new ShopDto()
         {
             ShopNumber = ShopNumber,
             Town = Town,
             PhoneNumber = PhoneNumber,
             DeliveryInfo = DeliveryInfo,
-            Facia = FaciaType.ToString(),
+            Facia = FaciaChange,
             MapCoordinatesLatitude = MapCoordinatesLatitude,
             MapCoordinatesLongitude = MapCoordinatesLongitude
 
