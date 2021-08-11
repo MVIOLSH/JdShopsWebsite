@@ -74,7 +74,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/announcements", id.ToString());
+        var url = Url.Combine("https://jdshopsapi.szymanski.uk/api/announcements", id.ToString());
         announcements = await Http.GetFromJsonAsync<List<AnnouncementDto>>(url);
     }
 
@@ -110,7 +110,7 @@ else
 
         var newPostJson = JsonConvert.SerializeObject(newPost);
         var content = new StringContent(newPostJson, Encoding.UTF8, "application/json");
-        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/announcements/", id.ToString());
+        var url = Url.Combine("https://jdshopsapi.szymanski.uk/api/announcements/", id.ToString());
         var response = Http.PatchAsync(url, content);
         
 
@@ -118,7 +118,7 @@ else
 
     public void Delete(int id)
     {
-        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/announcements", id.ToString());
+        var url = Url.Combine("https://jdshopsapi.szymanski.uk/api/announcements", id.ToString());
         Http.DeleteAsync(url);
         var url2 = Url.Combine("/");
    

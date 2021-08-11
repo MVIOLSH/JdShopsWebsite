@@ -41,7 +41,7 @@
         var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
 
 
-        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/account/resetPass/", Id.ToString());
+        var url = Url.Combine("https://jdshopsapi.szymanski.uk/api/account/resetPass/", Id.ToString());
         Http.PatchAsync(url,content);
         var url2 = Url.Combine("/users");
         await Task.Delay(500);

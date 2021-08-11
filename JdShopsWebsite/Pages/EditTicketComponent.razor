@@ -89,7 +89,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/tickets", id.ToString());
+        var url = Url.Combine("https://jdshopsapi.szymanski.uk/api/tickets", id.ToString());
         tickets = await Http.GetFromJsonAsync<List<TicketDto>>(url);
     }
 
@@ -133,7 +133,7 @@ else
         var content = new StringContent(changedTicketJson, Encoding.UTF8, "application/json");
 
 
-        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/tickets", id.ToString());
+        var url = Url.Combine("https://jdshopsapi.szymanski.uk/api/tickets", id.ToString());
         Http.PatchAsync(url, content);
         var url2 = Url.Combine("/ticketDetails", id.ToString());
         await Task.Delay(500);

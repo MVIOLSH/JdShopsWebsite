@@ -70,7 +70,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        shops = await Http.GetFromJsonAsync<List<ShopDto>>($"https://jdshops-api-app.azurewebsites.net/api/shops");
+        shops = await Http.GetFromJsonAsync<List<ShopDto>>($"https://jdshopsapi.szymanski.uk/api/shops");
 
     }
 
@@ -81,7 +81,7 @@ else
     private void NavigateToShopDetails(float id)
     {
 
-        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/shops/", id.ToString());
+        var url = Url.Combine("https://jdshopsapi.szymanski.uk/api/shops/", id.ToString());
         var shop = Http.GetFromJsonAsync<List<ShopDto>>(url);
         var url2 = Url.Combine($"/shopDetails/", id.ToString());
         navigationManager.NavigateTo(url2, true);

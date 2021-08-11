@@ -77,7 +77,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/tickets/", id.ToString());
+        var url = Url.Combine("https://jdshopsapi.szymanski.uk/api/tickets/", id.ToString());
         tickets = await Http.GetFromJsonAsync<List<TicketDto>>(url);
     }
 

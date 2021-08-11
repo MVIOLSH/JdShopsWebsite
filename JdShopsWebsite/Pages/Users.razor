@@ -56,7 +56,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        users = await Http.GetFromJsonAsync<List<Shared.Users>>("https://jdshops-api-app.azurewebsites.net/api/account/users");
+        users = await Http.GetFromJsonAsync<List<Shared.Users>>("https://jdshopsapi.szymanski.uk/api/account/users");
     }
 
     private void NavigateToUserDetails(int id)
@@ -68,7 +68,7 @@ else
     }
     private async Task Seearch(string search)
     {
-        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/account/users?searchPhrase="+search);
+        var url = Url.Combine("https://jdshopsapi.szymanski.uk/api/account/users?searchPhrase="+search);
         users = await Http.GetFromJsonAsync<List<Shared.Users>>(url);
     }
 

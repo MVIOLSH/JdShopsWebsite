@@ -61,7 +61,7 @@
             MapCoordinatesLongitude = MapCoordinatesLongitude
 
         };
-        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/shops/", ShopNumber.ToString(), "/additional/");
+        var url = Url.Combine("https://jdshopsapi.szymanski.uk/api/shops/", ShopNumber.ToString(), "/additional/");
         Http.PostAsJsonAsync(url, newAddress);
         var url2 = Url.Combine("/shopDetails", ShopNumber.ToString());
         await Task.Delay(500);

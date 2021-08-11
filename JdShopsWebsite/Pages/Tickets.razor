@@ -52,7 +52,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/tickets?searchPhrase=" );
+        var url = Url.Combine("https://jdshopsapi.szymanski.uk/api/tickets?searchPhrase=" );
         tickets = await Http.GetFromJsonAsync<List<TicketDto>>(url);
     }
     private void NavigateToTicketDetails(int id)
@@ -65,7 +65,7 @@ else
 
     private async Task Seearch(string search)
     {
-        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/tickets?searchPhrase="+search);
+        var url = Url.Combine("https://jdshopsapi.szymanski.uk/api/tickets?searchPhrase="+search);
         tickets = await Http.GetFromJsonAsync<List<TicketDto>>(url);
     }
 

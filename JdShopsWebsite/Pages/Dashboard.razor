@@ -41,7 +41,7 @@ private List<AnnouncementDto> announcements { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        announcements = await Http.GetFromJsonAsync<List<AnnouncementDto>>("https://jdshops-api-app.azurewebsites.net/api/announcements");
+        announcements = await Http.GetFromJsonAsync<List<AnnouncementDto>>("https://jdshopsapi.szymanski.uk/api/announcements");
     }
 
         public async void GoToId(int id)

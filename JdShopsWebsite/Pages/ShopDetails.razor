@@ -194,7 +194,7 @@ else
 
         async void DeleteShopPictureById(int id, string shopNumber)
         {
-            var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/images", id.ToString());
+            var url = Url.Combine("https://jdshopsapi.szymanski.uk/api/images", id.ToString());
             Http.DeleteAsync(url);
             var url2 = Url.Combine("/shopDetails/", shopNumber);
             await Task.Delay(500);
@@ -203,7 +203,7 @@ else
 
         async void DeleteAddressPictureById(int id, string shopNumber)
         {
-            var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/images/additional", shopNumber, id.ToString());
+            var url = Url.Combine("https://jdshopsapi.szymanski.uk/api/images/additional", shopNumber, id.ToString());
             Http.DeleteAsync(url);
             var url2 = Url.Combine("/shopDetails/", shopNumber);
             await Task.Delay(500);
@@ -224,17 +224,17 @@ else
 
         protected override async Task OnInitializedAsync()
         {
-            var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/shops/", id.ToString());
+            var url = Url.Combine("https://jdshopsapi.szymanski.uk/api/shops/", id.ToString());
             shops = await Http.GetFromJsonAsync<List<ShopDto>>(url);
 
-            var url2 = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/shops/", id.ToString(), "/additional");
+            var url2 = Url.Combine("https://jdshopsapi.szymanski.uk/api/shops/", id.ToString(), "/additional");
             addAddresses = await Http.GetFromJsonAsync<List<AdditionalAddreessesDto>>(url2);
             imgurl = id.ToString() + ".jpg";
 
-            var url3 = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/images", id.ToString());
+            var url3 = Url.Combine("https://jdshopsapi.szymanski.uk/api/images", id.ToString());
             listOfShopImages = await Http.GetFromJsonAsync<List<ImgShop>>(url3);
 
-            //var url4 = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/images/additional/", id.ToString());
+            //var url4 = Url.Combine("https://jdshopsapi.szymanski.uk/api/images/additional/", id.ToString());
             //AddAddressImages = await Http.GetFromJsonAsync<List<AddAddressImg>>(url4);
 
         }
@@ -242,14 +242,14 @@ else
 
         //public Object GetAddressImg(string addressId, string filename)
         //{
-        //    var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/images/additional", id.ToString(), addressId, filename);
+        //    var url = Url.Combine("https://jdshopsapi.szymanski.uk/api/images/additional", id.ToString(), addressId, filename);
         //    return url;
         //}
 
 
         public Object GetImg(string shopNumber, string filename)
         {
-            var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/images", shopNumber, filename);
+            var url = Url.Combine("https://jdshopsapi.szymanski.uk/api/images", shopNumber, filename);
             return url;
         }
 

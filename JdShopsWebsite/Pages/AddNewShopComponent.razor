@@ -81,7 +81,7 @@
 
 
         };
-        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/shops/");
+        var url = Url.Combine("https://jdshopsapi.szymanski.uk/api/shops/");
         Http.PostAsJsonAsync(url, newShop);
         var url2 = Url.Combine("/shops/");
         await Task.Delay(500);

@@ -71,7 +71,7 @@
         content.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("form-data");
         content.Add(new StreamContent(filestream, (int)filestream.Length), "file", filename);
         content.Add(new StringContent(Description), "description");
-        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/images", shopNumber.ToString());
+        var url = Url.Combine("https://jdshopsapi.szymanski.uk/api/images", shopNumber.ToString());
         var response = await Http.PostAsync(url, content);
 
         var url2 = Url.Combine("/shopDetails", shopNumber.ToString());

@@ -46,7 +46,7 @@ namespace JdShopsWebsite.Services
         public async Task<HttpResponseMessage> Register(RegisterModel registerModel)
         {
             var result = await _httpClient.PostAsJsonAsync<RegisterModel>(
-                "https://jdshops-api-app.azurewebsites.net/api/account/register", registerModel
+                "https://jdshopsapi.szymanski.uk/api/account/register", registerModel
                 );
             
             return result;
@@ -55,7 +55,7 @@ namespace JdShopsWebsite.Services
         public async Task<LoginResult> Login(LoginModel loginModel)
         {
             
-            var response = await _httpClient.PostAsJsonAsync<LoginModel>("https://jdshops-api-app.azurewebsites.net/api/account/login", loginModel);
+            var response = await _httpClient.PostAsJsonAsync<LoginModel>("https://jdshopsapi.szymanski.uk/api/account/login", loginModel);
 
             var json = await response.Content.ReadAsStringAsync();
             var handler = new JwtSecurityTokenHandler();

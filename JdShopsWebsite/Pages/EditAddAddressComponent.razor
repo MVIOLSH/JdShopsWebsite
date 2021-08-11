@@ -72,7 +72,7 @@
             MapCoordinatesLongitude = MapCoordinatesLongitude
 
         };
-        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/shops/", ShopNumber.ToString(), "/additional/", Id.ToString());
+        var url = Url.Combine("https://jdshopsapi.szymanski.uk/api/shops/", ShopNumber.ToString(), "/additional/", Id.ToString());
         Http.PutAsJsonAsync(url, newAddress);
         var url2 = Url.Combine("/shopDetails", ShopNumber.ToString());
         ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));

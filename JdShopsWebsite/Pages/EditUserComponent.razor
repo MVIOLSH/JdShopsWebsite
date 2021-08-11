@@ -118,7 +118,7 @@
         var content = new StringContent(changedUserJson, Encoding.UTF8, "application/json");
 
 
-        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/account/update", id.ToString());
+        var url = Url.Combine("https://jdshopsapi.szymanski.uk/api/account/update", id.ToString());
         Http.PatchAsync(url, content);
         var url2 = Url.Combine("/userDetails", id.ToString());
         ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));

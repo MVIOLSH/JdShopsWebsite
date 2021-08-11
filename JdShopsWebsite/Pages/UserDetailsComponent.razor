@@ -71,7 +71,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/account/users/", id.ToString());
+        var url = Url.Combine("https://jdshopsapi.szymanski.uk/api/account/users/", id.ToString());
         users = await Http.GetFromJsonAsync<List<Shared.Users>>(url);
     }
 

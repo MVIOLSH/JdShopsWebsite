@@ -67,7 +67,7 @@
             Status = Status
 
         };
-        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/tickets/");
+        var url = Url.Combine("https://jdshopsapi.szymanski.uk/api/tickets/");
         Http.PostAsJsonAsync(url, newTicket);
         var url2 = Url.Combine("/shops/");
         await Task.Delay(500);

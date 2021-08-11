@@ -25,7 +25,7 @@
     {
         ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
 
-        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/account/", id.ToString());
+        var url = Url.Combine("https://jdshopsapi.szymanski.uk/api/account/", id.ToString());
         Http.DeleteAsync(url);
         var url2 = Url.Combine("/users");
         await Task.Delay(500);

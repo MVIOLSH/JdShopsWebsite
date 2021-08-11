@@ -16,7 +16,7 @@
         <label for="Facia" style="font-weight:bold">Choose the Shop Brand</label><br />
         <label for="Facia" style="font-weight:bold">Current Value: @Facia</label><br />
                                                                                  <select class="form-select form-select-sm" aria-label=".form-select-sm example" @bind="FaciaChange">
-                                                                                     <option value=""> </option>
+                                                                                     <option value="">Please choose One </option>
                                                                                      <option value="@faciaTypeEnum.JD">JD Sports</option>
                                                                                      <option value="@faciaTypeEnum.Blacks">Blacks</option>
                                                                                      <option value="@faciaTypeEnum.Size">Size?</option>
@@ -108,7 +108,7 @@
 
 
         };
-        var url = Url.Combine("https://jdshops-api-app.azurewebsites.net/api/shops/", ShopNumber.ToString());
+        var url = Url.Combine("https://jdshopsapi.szymanski.uk/api/shops/", ShopNumber.ToString());
         Http.PutAsJsonAsync(url, newShop);
         var url2 = Url.Combine("/shopDetails/", ShopNumber.ToString());
         await Task.Delay(500);
